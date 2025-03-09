@@ -1,125 +1,94 @@
-import React, { useState, useCallback } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { CheckCircle, Circle } from 'lucide-react';
+'use client';
 
-interface FieldProps {
-  name: string;
-  type: string;
-  placeholder: string;
-}
+import { useState } from 'react';
+import Stepper, { StepContent } from '@/components/stepper';
+import { LanguageCard, OtherLanguageSelector } from '@/components/language-card';
+import Image from 'next/image';
 
-interface StepProps {
-  label: string;
-  fields?: FieldProps[];
-}
-
-const steps: StepProps[] = [
-  { label: 'Introduction' },
-  {
-    label: 'Personal Information',
-    fields: [
-      { name: 'name', type: 'text', placeholder: 'Name' },
-      { name: 'email', type: 'email', placeholder: 'Email' },
-    ],
-  },
-  {
-    label: 'Address Details',
-    fields: [
-      { name: 'address', type: 'text', placeholder: 'Address' },
-      { name: 'city', type: 'text', placeholder: 'City' },
-      { name: 'country', type: 'text', placeholder: 'Country' },
-    ],
-  },
-  { label: 'Review & Submit' },
+const steps = [
+  { label: 'Choose Language' },
+  { label: 'Reading Level' },
+  { label: 'Take a Picture' },
+  { label: 'Name Your Toy' },
 ];
 
-const StepIndicator: React.FC<{ currentStep: number; steps: StepProps[] }> = ({
-  currentStep,
-  steps,
-}) => (
-  <div className="flex justify-between">
-    {steps.map((step, index) => (
-      <div key={step.label} className="flex flex-col items-center">
-        <motion.div
-          className={`flex h-10 w-10 items-center justify-center rounded-full ${
-            index <= currentStep ? 'bg-red-500/15 text-red-500' : 'bg-secondary'
-          }`}
-          initial={false}
-          animate={{ scale: index === currentStep ? 1.2 : 1 }}
-        >
-          {index <= currentStep ? <CheckCircle size={20} /> : <Circle size={20} />}
-        </motion.div>
-        <div className="mt-2 text-sm">{step.label}</div>
+export default function NewToy() {
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const stepContent1 = (
+    <div className="flex flex-col gap-4">
+      <h2 className="text-4xl font-medium text-gray-800">
+        What language would you like your child to learn?
+      </h2>
+      <div className="flex flex-row flex-wrap gap-4">
+        <LanguageCard
+          language="Spanish"
+          countryCodes={['ES', 'MX']}
+          selected={selectedLanguage === 'Spanish'}
+          onSelect={() => setSelectedLanguage('Spanish')}
+        />
+        <LanguageCard
+          language="French"
+          countryCodes={['FR']}
+          selected={selectedLanguage === 'French'}
+          onSelect={() => setSelectedLanguage('French')}
+        />
+        <LanguageCard
+          language="German"
+          countryCodes={['DE']}
+          selected={selectedLanguage === 'German'}
+          onSelect={() => setSelectedLanguage('German')}
+        />
+        <LanguageCard
+          language="Japanese"
+          countryCodes={['JP']}
+          selected={selectedLanguage === 'Japanese'}
+          onSelect={() => setSelectedLanguage('Japanese')}
+        />
+        <LanguageCard
+          language="Korean"
+          countryCodes={['KR']}
+          selected={selectedLanguage === 'Korean'}
+          onSelect={() => setSelectedLanguage('Korean')}
+        />
+        <LanguageCard
+          language="Hindi"
+          countryCodes={['IN']}
+          selected={selectedLanguage === 'Hindi'}
+          onSelect={() => setSelectedLanguage('Hindi')}
+        />
+        <LanguageCard
+          language="Chinese (Mandarin)"
+          countryCodes={['CN', 'HK', 'TW']}
+          selected={selectedLanguage === 'Chinese (Mandarin)'}
+          onSelect={() => setSelectedLanguage('Chinese (Mandarin)')}
+        />
       </div>
-    ))}
-  </div>
-);
-
-const ProgressBar: React.FC<{ currentStep: number; totalSteps: number }> = ({
-  currentStep,
-  totalSteps,
-}) => (
-  <motion.div
-    className="mt-4 h-2 rounded-full bg-red-500"
-    initial={{ width: '0%' }}
-    animate={{ width: `${(currentStep / (totalSteps - 1)) * 100}%` }}
-  />
-);
-
-const StepContent: React.FC = () => {
-  return (
-    <div className="my-4 flex min-h-[30vh] w-full items-center justify-center rounded-lg border bg-gray-100  text-center dark:border-gray-600 dark:bg-gray-800">
-      Stepper Content
+      <OtherLanguageSelector onSelect={(language) => setSelectedLanguage(language)} />
     </div>
   );
-};
-
-const ButtonClasses = 'rounded-2xl bg-red-500 px-2 py-1 text-sm font-medium text-white';
-
-const NavigationButtons: React.FC<{
-  currentStep: number;
-  totalSteps: number;
-  handlePrev: () => void;
-  handleNext: () => void;
-}> = ({ currentStep, totalSteps, handlePrev, handleNext }) => (
-  <div className="flex justify-end gap-3">
-    {currentStep === 0 ? null : (
-      <button onClick={handlePrev} className={ButtonClasses}>
-        Previous
-      </button>
-    )}
-    {currentStep === totalSteps - 1 ? null : (
-      <button onClick={handleNext} className={ButtonClasses}>
-        Next
-      </button>
-    )}
-  </div>
-);
-
-const Stepper: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-
-  const handleNext = useCallback(() => {
-    setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
-  }, []);
-
-  const handlePrev = useCallback(() => {
-    setCurrentStep(prev => Math.max(prev - 1, 0));
-  }, []);
 
   return (
-    <div className="mx-auto w-full max-w-2xl p-6">
-      <StepIndicator currentStep={currentStep} steps={steps} />
-      <ProgressBar currentStep={currentStep} totalSteps={steps.length} />
-      <StepContent />
-      <NavigationButtons
-        currentStep={currentStep}
-        totalSteps={steps.length}
-        handlePrev={handlePrev}
-        handleNext={handleNext}
-      />
+    <div className="h-screen w-screen flex">
+      <div className="lg:mx-24 mx-4 pt-16 gap-4 flex flex-col">
+        <div className="mx-auto h-20 rounded-md overflow-hidden">
+          <Image
+            className="h-full w-auto"
+            src="/ToysToStoriesNoBG.svg"
+            alt="banner"
+            width={1187}
+            height={176}
+            style={{
+              objectFit: 'contain',
+            }}
+          />
+        </div>
+        <Stepper steps={steps}>
+          <StepContent>{stepContent1}</StepContent>
+          <StepContent>Reading Level Content</StepContent>
+          <StepContent>Take a Picture Content</StepContent>
+          <StepContent>Name Your Toy Content</StepContent>
+        </Stepper>
+      </div>
     </div>
   );
-};
-
-export default Stepper;
+}

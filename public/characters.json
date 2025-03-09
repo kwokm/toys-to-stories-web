@@ -1,24 +1,3 @@
 {
-  "toys": [
-    {
-      "character traits": ["brave", "loyal", "friendly"],
-      "name": "Growly",
-      "title": "Tiger"
-    },
-    {
-      "character traits": ["wise", "gentle", "calm"],
-      "name": "Shelly",
-      "title": "Turtle"
-    },
-    {
-      "character traits": ["mischievous", "clever", "quick"],
-      "name": "Rascal",
-      "title": "Fox"
-    },
-    {
-      "character traits": ["playful", "energetic", "happy"],
-      "name": "Buster",
-      "title": "Dog"
-    }
-  ]
+  "toys": []
 }

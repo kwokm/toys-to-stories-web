@@ -30,14 +30,14 @@ export default function CharactersPage() {
       <h1 className="text-3xl font-bold mb-6">Your Characters</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {characters.toys.map((toy, index) => (
+        {characters.toys.map((toy: any, index: number) => (
           <div key={index} className="border rounded-lg p-4 shadow-sm">
             <h2 className="text-xl font-semibold">{toy.name}</h2>
             <p className="text-gray-600">{toy.title}</p>
             <div className="mt-2">
               <h3 className="font-medium">Character Traits:</h3>
               <ul className="list-disc list-inside">
-                {toy['character traits'].map((trait, i) => (
+                {toy['character traits'].map((trait: string, i: number) => (
                   <li key={i}>{trait}</li>
                 ))}
               </ul>

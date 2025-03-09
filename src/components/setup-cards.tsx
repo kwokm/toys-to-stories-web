@@ -99,7 +99,9 @@ function OtherLanguageSelector({ onSelect }: { onSelect: (language: string) => v
                   value={language.value}
                   onSelect={currentValue => {
                     setValue(currentValue === value ? '' : currentValue);
-                    const selectedLanguage = languages.find(lang => lang.value === currentValue)?.label;
+                    const selectedLanguage = languages.find(
+                      lang => lang.value === currentValue
+                    )?.label;
                     if (selectedLanguage && currentValue !== value) {
                       onSelect(selectedLanguage);
                     }
@@ -192,8 +194,11 @@ function ReadingLevelCard({
       onClick={onSelect}
     >
       <div className="flex flex-col gap-2">
-      <p className="text-left text-2xl font-semibold text-slate-800">{title}</p>
-      <div className="flex flex-row gap-1"><Baby className="w-3.5 h-3.5" /><p className="leading-none text-sm text-slate-600">{ageRange}</p></div>
+        <p className="text-left text-2xl font-semibold text-slate-800">{title}</p>
+        <div className="flex flex-row gap-1">
+          <Baby className="w-3.5 h-3.5" />
+          <p className="leading-none text-sm text-slate-600">{ageRange}</p>
+        </div>
       </div>
       <p className="text-left text-base text-slate-700">{description}</p>
     </Card>

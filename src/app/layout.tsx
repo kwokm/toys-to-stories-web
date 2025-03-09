@@ -30,7 +30,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${lilyScriptOne.variable} antialiased flex flex-col`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${lilyScriptOne.variable} antialiased flex flex-col`}
+      >
         {children}
       </body>
     </html>

@@ -1,6 +1,6 @@
 @import 'tailwindcss';
-@import "uploadthing/tw/v4";
-@import "../../node_modules/@uploadthing/react/dist/index.css";
+@import 'uploadthing/tw/v4';
+@import '../../node_modules/@uploadthing/react/dist/index.css';
 
 @plugin "tailwindcss-animate";
 

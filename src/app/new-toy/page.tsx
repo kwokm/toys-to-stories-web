@@ -1,5 +1,5 @@
 'use client';
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from 'tailwind-merge';
 
 import { useState } from 'react';
 import Stepper, { StepContent } from '@/components/stepper';
@@ -18,7 +18,7 @@ const steps = [
 export default function NewToy() {
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [readingLevel, setReadingLevel] = useState<number | null>(null);
-  
+
   // Add a wrapper function to log the selected language
   const handleLanguageSelect = (language: string) => {
     console.log('Selected language:', language);
@@ -74,19 +74,21 @@ export default function NewToy() {
           onSelect={() => setSelectedLanguage('Chinese (Mandarin)')}
         />
       </div>
-      <OtherLanguageSelector onSelect={(language) => setSelectedLanguage(language)} />
+      <OtherLanguageSelector onSelect={language => setSelectedLanguage(language)} />
     </div>
   );
 
   const stepContent2 = (
     <div className="flex flex-col gap-4">
       <h2 className="pb-4 text-left text-4xl font-medium text-gray-800">
-      What stage best describes the child's current reading level?
+        What stage best describes the child's current reading level?
       </h2>
       <div className="flex flex-col gap-4">
         <ReadingLevelCard
           title="Exploring Books"
-          description={"Looks at pictures, listens to voices, and occasionally likes to chew on books."}
+          description={
+            'Looks at pictures, listens to voices, and occasionally likes to chew on books.'
+          }
           ageRange="0-12 Months"
           selected={readingLevel === 1}
           onSelect={() => setReadingLevel(1)}
@@ -114,7 +116,7 @@ export default function NewToy() {
         />
         <ReadingLevelCard
           title="Starting to Read"
-          description="Recognizes words, enjoys a good plot twist, and uses &quot;reading&quot; as an excuse to stay up past bedtime."
+          description='Recognizes words, enjoys a good plot twist, and uses "reading" as an excuse to stay up past bedtime.'
           ageRange="4-5 Years"
           selected={readingLevel === 5}
           onSelect={() => setReadingLevel(5)}
@@ -126,48 +128,50 @@ export default function NewToy() {
   const stepContent3 = (
     <div className="flex flex-col gap-4">
       <h2 className="pb-4 text-left text-4xl font-medium text-gray-800">
-      Let's bring your child's favorite toy to life!
+        Let's bring your child's favorite toy to life!
       </h2>
-      <p className="text-left text-base text-gray-600">Snap a photo of your child's favorite toy, and it will become an imaginary friend in a personalized story! Along the way, your child will learn four new words in the chosen language.</p>
+      <p className="text-left text-base text-gray-600">
+        Snap a photo of your child's favorite toy, and it will become an imaginary friend in a
+        personalized story! Along the way, your child will learn four new words in the chosen
+        language.
+      </p>
       <div className="flex flex-row gap-8 w-full items-center justify-center">
-      <UploadButton
-        config= {{cn: twMerge}}
-        endpoint="imageUploader"
-        onClientUploadComplete={(res) => {
-          // Do something with the response
-          console.log("Files: ", res);
-
-        }}
-        onUploadError={(error: Error) => {
-          console.log(error);
-        }}
-      />
-                  <Button>
-        <CameraIcon className="w-4 h-4" />
-        <p>Take a Photo</p>
-      </Button>
+        <UploadButton
+          config={{ cn: twMerge }}
+          endpoint="imageUploader"
+          onClientUploadComplete={res => {
+            // Do something with the response
+            console.log('Files: ', res);
+          }}
+          onUploadError={(error: Error) => {
+            console.log(error);
+          }}
+        />
+        <Button>
+          <CameraIcon className="w-4 h-4" />
+          <p>Take a Photo</p>
+        </Button>
       </div>
     </div>
   );
 
   const stepContent4 = (
     <div className="flex flex-col gap-4">
-      <h2 className="pb-4 text-left text-4xl font-medium text-gray-800">
-      Ready for an Adventure?
-      </h2>
-      <p className="text-left text-base text-gray-600">Your child’s favorite toy is ready for an adventure! If everything looks good, let’s begin!</p>
+      <h2 className="pb-4 text-left text-4xl font-medium text-gray-800">Ready for an Adventure?</h2>
+      <p className="text-left text-base text-gray-600">
+        Your child’s favorite toy is ready for an adventure! If everything looks good, let’s begin!
+      </p>
       <div className="flex flex-row gap-4">
-      <UploadButton
-        endpoint="imageUploader"
-        onClientUploadComplete={(res) => {
-          // Do something with the response
-          console.log("Files: ", res);
-          
-        }}
-        onUploadError={(error: Error) => {
-          console.log(error);
-        }}
-      />
+        <UploadButton
+          endpoint="imageUploader"
+          onClientUploadComplete={res => {
+            // Do something with the response
+            console.log('Files: ', res);
+          }}
+          onUploadError={(error: Error) => {
+            console.log(error);
+          }}
+        />
       </div>
     </div>
   );
@@ -187,9 +191,12 @@ export default function NewToy() {
             }}
           />
         </div>
-        <Stepper steps={steps} handleComplete={() => {
-          console.log("Complete");
-        }}>
+        <Stepper
+          steps={steps}
+          handleComplete={() => {
+            console.log('Complete');
+          }}
+        >
           <StepContent>{stepContent1}</StepContent>
           <StepContent>{stepContent2}</StepContent>
           <StepContent>{stepContent3}</StepContent>

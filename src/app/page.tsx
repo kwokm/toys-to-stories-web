@@ -31,7 +31,7 @@ function emptyHome() {
           width={1843}
           height={426}
         />
-        <Link href="/new-toy">
+        <Link href="/new-user">
           <Button size="lg" className="text-lg">
             <Shapes className="h-3.5 w-3.5" />
             Get Started

@@ -3,22 +3,26 @@
     {
       "character traits": ["brave", "loyal", "friendly"],
       "name": "Growly",
-      "title": "Tiger"
+      "title": "Tiger",
+      "id": 0
     },
     {
       "character traits": ["wise", "gentle", "calm"],
       "name": "Shelly",
-      "title": "Turtle"
+      "title": "Turtle",
+      "id": 1
     },
     {
       "character traits": ["mischievous", "clever", "quick"],
       "name": "Rascal",
-      "title": "Fox"
+      "title": "Fox",
+      "id": 2
     },
     {
       "character traits": ["playful", "energetic", "happy"],
       "name": "Buster",
-      "title": "Dog"
+      "title": "Dog",
+      "id": 3
     }
   ]
 }

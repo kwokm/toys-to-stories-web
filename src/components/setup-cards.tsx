@@ -4,7 +4,7 @@ import FlagCascade from './atoms/flag-cascade';
 import { Card } from './ui/card';
 import ReactCountryFlag from 'react-country-flag';
 import { cn } from '../lib/utils';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, Baby } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -170,4 +170,34 @@ function LanguageCard({
   );
 }
 
-export { LanguageCard, OtherLanguageSelector };
+function ReadingLevelCard({
+  title,
+  description,
+  ageRange,
+  selected = false,
+  onSelect,
+}: {
+  title: string;
+  description: string;
+  ageRange: string;
+  selected?: boolean;
+  onSelect?: () => void;
+}) {
+  return (
+    <Card
+      className={cn(
+        'flex flex-col gap-4 w-full p-4 cursor-pointer transition-all duration-200',
+        selected ? 'bg-primary/10 border-primary shadow-md' : 'hover:bg-secondary/10'
+      )}
+      onClick={onSelect}
+    >
+      <div className="flex flex-col gap-2">
+      <p className="text-left text-2xl font-semibold text-slate-800">{title}</p>
+      <div className="flex flex-row gap-1"><Baby className="w-3.5 h-3.5" /><p className="leading-none text-sm text-slate-600">{ageRange}</p></div>
+      </div>
+      <p className="text-left text-base text-slate-700">{description}</p>
+    </Card>
+  );
+}
+
+export { LanguageCard, OtherLanguageSelector, ReadingLevelCard };

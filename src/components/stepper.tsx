@@ -86,7 +86,8 @@ const NavigationButtons: React.FC<{
   totalSteps: number;
   handlePrev: () => void;
   handleNext: () => void;
-}> = ({ currentStep, totalSteps, handlePrev, handleNext }) => (
+  handleComplete: () => void;
+}> = ({ currentStep, totalSteps, handlePrev, handleNext, handleComplete }) => (
   <div className="flex justify-end gap-3">
     {currentStep === 0 ? null : (
       <Button variant="outline" onClick={handlePrev}>
@@ -94,6 +95,11 @@ const NavigationButtons: React.FC<{
       </Button>
     )}
     {currentStep === totalSteps - 1 ? null : <Button onClick={handleNext}>Next</Button>}
+    {currentStep === totalSteps - 1 ? (
+      <Button variant="default" onClick={handleComplete}>
+        Complete
+      </Button>
+    ) : null}
   </div>
 );
 
@@ -131,6 +137,9 @@ const Stepper: React.FC<StepperProps> = ({ steps, children }) => {
           totalSteps={steps.length}
           handlePrev={handlePrev}
           handleNext={handleNext}
+          handleComplete={() => {
+            console.log("Complete");
+          }}
         />
       </div>
     </StepperContext.Provider>

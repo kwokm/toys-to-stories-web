@@ -1,0 +1,7 @@
+# Gemini API Key
+GOOGLE_GENERATIVE_AI_API_KEY=AIzaSyD1rgVz8vdJRIzpYOtrR6wWQmk3M1OI2iE
+GEMINI_API_KEY=AIzaSyD1rgVz8vdJRIzpYOtrR6wWQmk3M1OI2iE
+
+# Note: Replace 'your_gemini_api_key_here' with your actual Gemini API key
+# The NEXT_PUBLIC_ prefix allows this variable to be accessible in browser code
+# If you only need the API key on the server side, remove the NEXT_PUBLIC_ prefix 

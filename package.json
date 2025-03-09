@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "remove-git-ignored": "git rm -r --cached . && git add ."
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.2",

@@ -20,6 +20,7 @@ interface StepProps {
 interface StepperContextType {
   currentStep: number;
   totalSteps: number;
+  handleComplete: () => void;
 }
 
 const StepperContext = createContext<StepperContextType | undefined>(undefined);
@@ -107,9 +108,10 @@ const NavigationButtons: React.FC<{
 interface StepperProps {
   steps: StepProps[];
   children: ReactNode;
+  handleComplete: () => void;
 }
 
-const Stepper: React.FC<StepperProps> = ({ steps, children }) => {
+const Stepper: React.FC<StepperProps> = ({ steps, children, handleComplete }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const handleNext = useCallback(() => {
@@ -127,7 +129,7 @@ const Stepper: React.FC<StepperProps> = ({ steps, children }) => {
   const currentStepContent = childrenArray[currentStep] || null;
 
   return (
-    <StepperContext.Provider value={{ currentStep, totalSteps: steps.length }}>
+    <StepperContext.Provider value={{ currentStep, totalSteps: steps.length, handleComplete }}>
       <div className="mx-auto w-full p-6">
         <StepIndicator currentStep={currentStep} steps={steps} />
         <ProgressBar currentStep={currentStep} totalSteps={steps.length} />
@@ -137,9 +139,7 @@ const Stepper: React.FC<StepperProps> = ({ steps, children }) => {
           totalSteps={steps.length}
           handlePrev={handlePrev}
           handleNext={handleNext}
-          handleComplete={() => {
-            console.log("Complete");
-          }}
+          handleComplete={handleComplete}
         />
       </div>
     </StepperContext.Provider>

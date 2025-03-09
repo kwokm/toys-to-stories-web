@@ -1,6 +1,5 @@
 'use client';
 import { twMerge } from 'tailwind-merge'
-import "@uploadthing/react/styles.css";
 
 import { useState } from 'react';
 import Stepper, { StepContent } from '@/components/stepper';
@@ -188,7 +187,9 @@ export default function NewToy() {
             }}
           />
         </div>
-        <Stepper steps={steps}>
+        <Stepper steps={steps} handleComplete={() => {
+          console.log("Complete");
+        }}>
           <StepContent>{stepContent1}</StepContent>
           <StepContent>{stepContent2}</StepContent>
           <StepContent>{stepContent3}</StepContent>

@@ -13,9 +13,9 @@ function main() {
 
     for (let i = 0; i < 7; i++) {
         const inputFilePath = `/Users/michaelkwok/Code/toys-to-stories-web-next/public/toy-photos/no-bg/${i}-nobg.png`;
-        const outputFilePath = '/Users/michaelkwok/Code/toys-to-stories-web-next/public/toy-photos/no-bg/compressed';
+        const outputFilePath = '/Users/michaelkwok/Code/toys-to-stories-web-next/public/toy-photos/bmp';
         const outputFileName = `${i}`;
-        resizeImage(inputFilePath, outputFilePath, outputFileName);
+        processImageServerSide(inputFilePath, outputFilePath, outputFileName);
     }
 }
 

@@ -221,32 +221,20 @@ export default function NewUser() {
         />
       </div>
       <div className="my-4 mx-auto">
-        <Card className="rotate-3 flex w-96 flex-col gap-3 items-center rounded-xs">
+        <Card className="rotate-2 flex w-96 flex-col gap-3 items-center rounded-xs">
           {capturedImage ? (
             <Image
               src={capturedImage}
               alt="Captured toy"
               width={300}
               height={300}
-              className="rounded-md object-cover"
+              className="rounded-md object-cover h-75 w-75"
             />
           ) : (
             <div className="h-75 w-75 bg-gray-100 rounded-md border border-gray-300"></div>
           )}
 
-          <div className="flex flex-col gap-0 items-center">
-            <Input
-              className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 font-lily h-auto font-bold md:text-5xl border-none"
-              type="text"
-              placeholder={toyName}
-          />
-          <p className="mt-[-12]">{toyName && 'the'}</p>
-                    <Input
-              className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 h-auto font-bold md:text-xl border-none"
-              type="text"
-              placeholder={toyTitle}
-          />
-          </div>
+          <div className="h-20" />
         </Card>
       </div>
     </div>
@@ -254,21 +242,34 @@ export default function NewUser() {
 
   const stepContent4 = (
     <div className="flex flex-col gap-4">
-      <h2 className="pb-4 text-left text-4xl font-medium text-gray-800">Ready for an Adventure?</h2>
-      <p className="text-left text-base text-gray-600">
-        Your child's favorite toy is ready for an adventure! If everything looks good, let's begin!
-      </p>
-      <div className="flex flex-row gap-4">
-        <UploadButton
-          endpoint="imageUploader"
-          onClientUploadComplete={res => {
-            // Do something with the response
-            console.log('Files: ', res);
-          }}
-          onUploadError={(error: Error) => {
-            console.log(error);
-          }}
-        />
+      <div className="my-4 mx-auto">
+        <Card className="rotate-2 flex w-96 flex-col gap-3 items-center rounded-xs">
+          {capturedImage ? (
+            <Image
+              src={capturedImage}
+              alt="Captured toy"
+              width={300}
+              height={300}
+              className="rounded-md object-cover h-75 w-75"
+            />
+          ) : (
+            <div className="h-75 w-75 bg-gray-100 rounded-md border border-gray-300"></div>
+          )}
+
+          <div className="flex flex-col gap-0 items-center">
+            <Input
+              className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 font-lily h-auto font-bold md:text-4xl border-none"
+              type="text"
+              placeholder={toyName}
+          />
+          <p className="text-gray-400 font-light mt-[-2]">{toyName && 'the'}</p>
+                    <Input
+              className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 h-auto font-medium md:text-xl border-none"
+              type="text"
+              placeholder={toyTitle}
+          />
+          </div>
+        </Card>
       </div>
     </div>
   );
@@ -297,7 +298,7 @@ export default function NewUser() {
           <StepContent>{stepContent1}</StepContent>
           <StepContent>{stepContent2}</StepContent>
           <StepContent>{stepContent3}</StepContent>
-          <StepContent>Name Your Toy Content</StepContent>
+          <StepContent>{stepContent4}</StepContent>
         </Stepper>
       </div>
     </div>

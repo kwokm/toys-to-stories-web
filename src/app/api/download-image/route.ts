@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
     
     // Return the path that can be used to access the file
     const publicPath = `${path.join(process.cwd(), 'public', 'toy-photos', 'bg')}/${filename}`;
+    console.log(publicPath);
     
     return NextResponse.json({ 
       success: true, 

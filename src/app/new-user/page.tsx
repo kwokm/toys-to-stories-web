@@ -203,13 +203,8 @@ export default function NewUser() {
                 if (data.success) {
                   // console.log('Local server path:', data.filepath);
                   toyImage = data.filepath;
-                  const result = identifyToy(`${data.filepath}`, res[0].type);
-                  result.then(result => {
-                    // console.log(result);
-                    setToyName(JSON.parse(result).Name);
-                    setToyTitle(JSON.parse(result).Item);
-                  });
-
+                  setToyName(JSON.parse(data.gemini).Name);
+                  setToyTitle(JSON.parse(data.gemini).Item);
                 }
               })
               .catch(error => {

@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { identifyToy } from '@/lib/gemini/toyIdentification';
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,11 +45,12 @@ export async function POST(request: NextRequest) {
     
     // Return the path that can be used to access the file
     const publicPath = `${uploadDir}/${filename}`;
-    console.log("hello", publicPath);
+    const result = await identifyToy(`${publicPath}`, `image/${extension}`);
     
     return NextResponse.json({ 
       success: true, 
       filepath: publicPath,
+      gemini: result,
       originalUrl: imageUrl
     });
   } catch (error) {

@@ -74,4 +74,4 @@ export async function identifyToy(imagePath, imageType) {
   return result.response.text();
 }
 
-identifyToy("./9db23a46-31cd-4a90-89c5-96622ba9b495.webp", "image/webp");
+// identifyToy("./9db23a46-31cd-4a90-89c5-96622ba9b495.webp", "image/webp");

@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     await writeFile(filepath, buffer);
     
     // Return the path that can be used to access the file
-    const publicPath = `${path.join(process.cwd(), 'public', 'toy-photos', 'bg')}/${filename}`;
+    const publicPath = `${path.join('public', 'toy-photos', 'bg')}/${filename}`;
     console.log(publicPath);
     
     return NextResponse.json({ 

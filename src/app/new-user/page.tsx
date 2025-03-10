@@ -182,6 +182,7 @@ export default function NewUser() {
             );
             let geminipath: string = "";
             toyKey = res[0].key;
+            console.log(res[0].url);
             
             // Download the image to the server
             fetch('/api/download-image', {

@@ -3,4 +3,3 @@ export * from './wordsToAudioGeminiPrompt';
 export * from './toyIdentification';
 export * from './storyTranslation';
 export * from './chooseVocabulary';
-export * from './toyIdentification2';

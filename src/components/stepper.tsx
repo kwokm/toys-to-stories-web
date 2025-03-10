@@ -63,7 +63,7 @@ const ProgressBar: React.FC<{ currentStep: number; totalSteps: number }> = ({
   <motion.div
     className="mt-4 h-2 rounded-full bg-red-500"
     initial={{ width: '0%' }}
-    animate={{ width: `${(currentStep / (totalSteps - 1)) * 100}%` }}
+    animate={{ width: `${Math.min((currentStep / (totalSteps - 1)) * 100 + 1, 100)}%` }}
   />
 );
 
@@ -74,7 +74,7 @@ interface StepContentProps {
 
 const StepContent: React.FC<StepContentProps> = ({ children }) => {
   return (
-    <div className="my-4 flex min-h-[30vh] w-full items-center justify-center rounded-lg text-center dark:border-gray-600">
+    <div className="my-6 flex min-h-[30vh] w-full justify-center rounded-lg text-center dark:border-gray-600">
       {children}
     </div>
   );
@@ -97,7 +97,7 @@ const NavigationButtons: React.FC<{
     )}
     {currentStep === totalSteps - 1 ? null : <Button onClick={handleNext}>Next</Button>}
     {currentStep === totalSteps - 1 ? (
-      <Button variant="default" onClick={handleComplete}>
+      <Button variant="default" className="bg-red-500" onClick={handleComplete}>
         Complete
       </Button>
     ) : null}

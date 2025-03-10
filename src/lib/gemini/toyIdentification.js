@@ -1,7 +1,8 @@
+"use server";
 const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@google/generative-ai');
 const { GoogleAIFileManager } = require('@google/generative-ai/server');
 
-const apiKey = 'AIzaSyD1rgVz8vdJRIzpYOtrR6wWQmk3M1OI2iE';
+const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
 const fileManager = new GoogleAIFileManager(apiKey);
 
@@ -46,7 +47,7 @@ const generationConfig = {
   },
 };
 
-export async function identifyToy(imagePath, imageType, message) {
+export async function identifyToy(imagePath, imageType) {
   // TODO Make these files available on the local file system
   // You may need to update the file paths
   const files = [await uploadToGemini(imagePath, imageType)];
@@ -68,8 +69,9 @@ export async function identifyToy(imagePath, imageType, message) {
     ],
   });
 
-  const result = await chatSession.sendMessage(message);
+  const result = await chatSession.sendMessage("");
+  console.log(result.response.text());
   return result.response.text();
 }
 
-// identifyToy("", "");
+identifyToy("./9db23a46-31cd-4a90-89c5-96622ba9b495.webp", "image/webp");

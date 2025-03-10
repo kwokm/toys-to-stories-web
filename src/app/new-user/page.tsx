@@ -1,23 +1,36 @@
 'use client';
 import { twMerge } from 'tailwind-merge';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Stepper, { StepContent } from '@/components/stepper';
 import { LanguageCard, OtherLanguageSelector, ReadingLevelCard } from '@/components/setup-cards';
 import Image from 'next/image';
 import { UploadButton } from '@/lib/uploadthing';
 import { Button } from '@/components/ui/button';
-import { CameraIcon } from 'lucide-react';
+import { CameraIcon, SwitchCameraIcon } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { identifyToy, storyCreation } from '@/lib/gemini';
+
 const steps = [
   { label: 'Choose Language' },
   { label: 'Reading Level' },
   { label: 'Take a Picture' },
-  { label: 'Name Your Toy' },
+  { label: 'Bring Them to Life' },
 ];
 
-export default function NewToy() {
+let toyName = '';
+let toyKey = '';
+let toyTitle = '';
+let personalityTraits = [''];
+let toyImage = '';
+
+export default function NewUser() {
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [readingLevel, setReadingLevel] = useState<number | null>(null);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [toyName, setToyName] = useState<string>('');
+  const [toyTitle, setToyTitle] = useState<string>('');
 
   // Add a wrapper function to log the selected language
   const handleLanguageSelect = (language: string) => {
@@ -126,8 +139,8 @@ export default function NewToy() {
   );
 
   const stepContent3 = (
-    <div className="flex flex-col gap-4">
-      <h2 className="pb-4 text-left text-4xl font-medium text-gray-800">
+    <div className="flex flex-col gap-4 pb-8">
+      <h2 className="pb-0 text-left text-4xl font-medium text-gray-800">
         Let's bring your child's favorite toy to life!
       </h2>
       <p className="text-left text-base text-gray-600">
@@ -137,20 +150,104 @@ export default function NewToy() {
       </p>
       <div className="flex flex-row gap-8 w-full items-center justify-center">
         <UploadButton
-          config={{ cn: twMerge }}
           endpoint="imageUploader"
+          config={{ cn: twMerge }}
+          content={{
+            button: ({ ready, isUploading }) => {
+              if (!ready)
+                return (
+                  <div className="font-medium text-sm flex flex-row gap-2 items-center">
+                    <CameraIcon className="w-4 h-4" />
+                    Loading...
+                  </div>
+                );
+              if (isUploading) return 'Uploading...';
+              return capturedImage ? (
+                <div className="font-medium text-sm flex flex-row gap-2 items-center">
+                  <SwitchCameraIcon className="w-4 h-4" />
+                  Retake Photo
+                </div>
+              ) : (
+                <div className="font-medium text-sm flex flex-row gap-2 items-center">
+                  <CameraIcon className="w-4 h-4" />
+                  Take a Photo
+                </div>
+              );
+            },
+          }}
+          className="ut-allowed-content:hidden transition-all duration-300 ut-button:ut-readying:bg-gray-600 ut-button:ut-uploading:bg-gray-600 ut-button:bg-black"
           onClientUploadComplete={res => {
-            // Do something with the response
-            console.log('Files: ', res);
+            setCapturedImage(
+              `https://${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}.ufs.sh/f/${res[0].key}`
+            );
+            let geminipath: string = "";
+            toyKey = res[0].key;
+            
+            // Download the image to the server
+            fetch('/api/download-image', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                imageUrl: res[0].url,
+                fileName: res[0].name
+              }),
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log('Image downloaded to server:', data);
+                // You can store the local server path if needed
+                // For example, you might want to use this path instead of the uploadthing URL
+                if (data.success) {
+                  // console.log('Local server path:', data.filepath);
+                  toyImage = data.filepath;
+                  const result = identifyToy(`${data.filepath}`, res[0].type);
+                  result.then(result => {
+                    // console.log(result);
+                    setToyName(JSON.parse(result).Name);
+                    setToyTitle(JSON.parse(result).Item);
+                  });
+
+                }
+              })
+              .catch(error => {
+                console.error('Error downloading image to server:', error);
+              });
           }}
           onUploadError={(error: Error) => {
             console.log(error);
           }}
         />
-        <Button>
-          <CameraIcon className="w-4 h-4" />
-          <p>Take a Photo</p>
-        </Button>
+      </div>
+      <div className="my-4 mx-auto">
+        <Card className="rotate-3 flex w-96 flex-col gap-3 items-center rounded-xs">
+          {capturedImage ? (
+            <Image
+              src={capturedImage}
+              alt="Captured toy"
+              width={300}
+              height={300}
+              className="rounded-md object-cover"
+            />
+          ) : (
+            <div className="h-75 w-75 bg-gray-100 rounded-md border border-gray-300"></div>
+          )}
+
+          <div className="flex flex-col gap-0 items-center">
+            <Input
+              className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 font-lily h-auto font-bold md:text-5xl border-none"
+              type="text"
+              placeholder={toyName}
+          />
+          <p className="mt-[-12]">{toyName && 'the'}</p>
+                    <Input
+              className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 h-auto font-bold md:text-xl border-none"
+              type="text"
+              placeholder={toyTitle}
+          />
+          </div>
+        </Card>
       </div>
     </div>
   );
@@ -159,7 +256,7 @@ export default function NewToy() {
     <div className="flex flex-col gap-4">
       <h2 className="pb-4 text-left text-4xl font-medium text-gray-800">Ready for an Adventure?</h2>
       <p className="text-left text-base text-gray-600">
-        Your child’s favorite toy is ready for an adventure! If everything looks good, let’s begin!
+        Your child's favorite toy is ready for an adventure! If everything looks good, let's begin!
       </p>
       <div className="flex flex-row gap-4">
         <UploadButton

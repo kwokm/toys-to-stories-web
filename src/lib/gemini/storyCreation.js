@@ -1,6 +1,9 @@
-const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@google/generative-ai');
+// Mark this file as server-only to prevent it from being bundled for the client
+'use server';
 
-const apiKey = 'AIzaSyD1rgVz8vdJRIzpYOtrR6wWQmk3M1OI2iE';
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
+
+const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
@@ -86,6 +89,8 @@ export async function storyCreation(input) {
   });
 
   const result = await chatSession.sendMessage(input);
-  // console.log(result.response.text());
+  console.log(result.response.text());
   return result.response.text();
 }
+
+storyCreation("ellie the elephant");

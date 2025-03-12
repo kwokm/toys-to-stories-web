@@ -1,15 +1,15 @@
-// Mark this file as server-only to prevent it from being bundled for the client
-'use server';
-
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
+const {
+  GoogleGenerativeAI,
+  HarmCategory,
+  HarmBlockThreshold,
+} = require("@google/generative-ai");
 
 const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
-  model: 'gemini-2.0-flash',
-  systemInstruction:
-    'This is part of a prompt chain helping bilingual parents connect with their children and teach them new words. You will receive a story in markdown format.\n\nChoose 4 words from the story for the child to learn. The words should be appropriate for the reading level of 3-6 years old. Add a description on how to pronounce the word while providing a mental model to allow parents to teach their kid to easily remember the word. Make sure to specify "description". Make sure the tense in the story and the chosen words are the same tense because the children this age are not old enough to learn grammar yet.  Generate 20 backups for 24 total.',
+  model: "gemini-2.0-flash",
+  systemInstruction: "You are helping parents connect with their children and learn new words. You will receive the title of a toy, and language.  Based primarily on the title, pick 4 vocabulary words that are appropriate for children between the ages of 2 and 5.  Place higher priority on words that can be associated with sound - for instance \"Roar\", \"Neigh\", \"Gallop\", \"Munch\".  Then translate the words to the given language.  Only return the word and translated word.\n\nExample Words:\nHorse: Neigh, Gallop, Roar, Munch\nDarth Vader: Lightsaber, Breathe, Push, Zoom\nAlligator: Chomp, Swimp, Mud, Snap",
 });
 
 const generationConfig = {
@@ -17,39 +17,45 @@ const generationConfig = {
   topP: 0.95,
   topK: 40,
   maxOutputTokens: 8192,
-  responseMimeType: 'application/json',
+  responseMimeType: "application/json",
   responseSchema: {
-    type: 'object',
+    type: "object",
     properties: {
-      'Word List': {
-        type: 'array',
+      VocabData: {
+        type: "array",
         items: {
-          type: 'object',
+          type: "object",
           properties: {
-            Word: {
-              type: 'string',
+            word: {
+              type: "string"
             },
-            Pronounciation: {
-              type: 'string',
-            },
-            Definition: {
-              type: 'string',
-            },
+            translation: {
+              type: "string"
+            }
           },
-          required: ['Word', 'Pronounciation', 'Definition'],
-        },
-      },
+          required: [
+            "word",
+            "translation"
+          ]
+        }
+      }
     },
-    required: ['Word List'],
+    required: [
+      "VocabData"
+    ]
   },
 };
 
-export async function chooseVocabulary(story) {
+async function chooseVocabulary(toyTitle, language) {
   const chatSession = model.startChat({
     generationConfig,
-    history: [],
+    history: [
+    ],
   });
 
-  const result = await chatSession.sendMessage(story);
+  const result = await chatSession.sendMessage(`Toy Title: ${toyTitle}, Language: ${language}`);
+  console.log(result.response.text());
   return result.response.text();
 }
+
+export { chooseVocabulary };

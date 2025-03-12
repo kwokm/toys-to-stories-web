@@ -1,3 +1,5 @@
+"use server";
+
 import { Button } from '@/components/ui/button';
 import { Shapes } from 'lucide-react';
 import Image from 'next/image';
@@ -8,7 +10,7 @@ import Link from 'next/link';
 // Function to safely read the characters.json file
 function getCharacters() {
   try {
-    const data = fs.readFileSync('public/characters.json', 'utf8');
+    const data = fs.readFileSync('/tmp/characters.json', 'utf8');
     return JSON.parse(data);
   } catch (error) {
     // Return an empty object if the file doesn't exist or can't be parsed
@@ -22,8 +24,8 @@ const characters = getCharacters();
 
 function emptyHome() {
   return (
-    <div className="h-screen w-screen flex align-center">
-      <div className="mx-24 my-auto gap-8 flex flex-col items-center align-center justify-center">
+    <div className="align-center flex h-screen w-screen">
+      <div className="align-center mx-24 my-auto flex flex-col items-center justify-center gap-8">
         <Image
           className="mx-auto rounded-lg"
           src="/ToysToStoriesBanner.svg"
@@ -42,7 +44,7 @@ function emptyHome() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
   // Check if characters.json has any toys
   if (characters.toys && characters.toys.length > 0) {
     // Redirect to /characters if there are toys in the characters.json file

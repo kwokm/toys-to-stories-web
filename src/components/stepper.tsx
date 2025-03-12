@@ -21,9 +21,19 @@ interface StepperContextType {
   currentStep: number;
   totalSteps: number;
   handleComplete: () => void;
+  isStepValid: boolean[];
+  isCurrentStepValid: boolean;
 }
 
-const StepperContext = createContext<StepperContextType | undefined>(undefined);
+const defaultStepperContext: StepperContextType = {
+  currentStep: 0,
+  totalSteps: 0,
+  handleComplete: () => {},
+  isStepValid: [],
+  isCurrentStepValid: false
+};
+
+const StepperContext = createContext<StepperContextType>(defaultStepperContext);
 
 // Hook to use the stepper context
 const useStepperContext = () => {
@@ -38,7 +48,7 @@ const StepIndicator: React.FC<{ currentStep: number; steps: StepProps[] }> = ({
   currentStep,
   steps,
 }) => (
-  <div className="flex gap-4 justify-between">
+  <div className="flex justify-between gap-4">
     {steps.map((step, index) => (
       <div key={step.label} className="flex flex-col items-center">
         <motion.div
@@ -50,7 +60,7 @@ const StepIndicator: React.FC<{ currentStep: number; steps: StepProps[] }> = ({
         >
           {index <= currentStep ? <CheckCircle size={20} /> : <Circle size={20} />}
         </motion.div>
-        <div className="mt-2 text-slate-600 font-medium text-sm">{step.label}</div>
+        <div className="mt-2 text-sm font-medium text-slate-600">{step.label}</div>
       </div>
     ))}
   </div>
@@ -88,19 +98,59 @@ const NavigationButtons: React.FC<{
   handlePrev: () => void;
   handleNext: () => void;
   handleComplete: () => void;
-}> = ({ currentStep, totalSteps, handlePrev, handleNext, handleComplete }) => (
-  <div className="flex justify-end gap-3">
-    {currentStep === 0 ? null : (
-      <Button variant="outline" onClick={handlePrev}>
-        Previous
-      </Button>
+  isCurrentStepValid: boolean;
+  isLoading?: boolean;
+}> = ({ 
+  currentStep, 
+  totalSteps, 
+  handlePrev, 
+  handleNext, 
+  handleComplete, 
+  isCurrentStepValid,
+  isLoading = false
+}) => (
+  <div className="flex flex-col items-end gap-2">
+    <div className="flex justify-end gap-3">
+      {currentStep === 0 ? null : (
+        <Button variant="outline" onClick={handlePrev} disabled={isLoading}>
+          Previous
+        </Button>
+      )}
+      {currentStep === totalSteps - 1 ? null : (
+        <Button onClick={handleNext} disabled={!isCurrentStepValid || isLoading}>
+          {isLoading ? 'Processing...' : 'Next'}
+        </Button>
+      )}
+      {currentStep === totalSteps - 1 ? (
+        <Button
+          variant="default"
+          className="motion-scale-loop-[102%] motion-duration-2500 motion-ease-in-out bg-red-500"
+          onClick={handleComplete}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Processing...' : 'Complete'}
+        </Button>
+      ) : null}
+    </div>
+   
+   {/* HELPER TEXT - NOT BEING USED
+
+    {!isCurrentStepValid && !isLoading && (
+      <p className="text-sm text-red-500">
+        {currentStep === 0
+          ? "Please select a language"
+          : currentStep === 1
+          ? "Please select a reading level"
+          : currentStep === 2
+          ? "Please take a photo of the toy"
+          : "Please wait for the toy data to be processed"}
+      </p>
     )}
-    {currentStep === totalSteps - 1 ? null : <Button onClick={handleNext}>Next</Button>}
-    {currentStep === totalSteps - 1 ? (
-      <Button variant="default" className="bg-red-500" onClick={handleComplete}>
-        Complete
-      </Button>
-    ) : null}
+    {isLoading && (
+      <p className="text-sm text-blue-500">
+        Processing your data...
+      </p>
+    )}*/}
   </div>
 );
 
@@ -109,9 +159,17 @@ interface StepperProps {
   steps: StepProps[];
   children: ReactNode;
   handleComplete: () => void;
+  isStepValid?: boolean[];
+  isLoading?: boolean[];
 }
 
-const Stepper: React.FC<StepperProps> = ({ steps, children, handleComplete }) => {
+const Stepper: React.FC<StepperProps> = ({ 
+  steps, 
+  children, 
+  handleComplete, 
+  isStepValid = [],
+  isLoading = []
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const handleNext = useCallback(() => {
@@ -128,9 +186,21 @@ const Stepper: React.FC<StepperProps> = ({ steps, children, handleComplete }) =>
   // Get the current step content based on the current step index
   const currentStepContent = childrenArray[currentStep] || null;
 
+  // Check if the current step is valid
+  const isCurrentStepValid = isStepValid[currentStep] !== undefined ? isStepValid[currentStep] : true;
+  
+  // Check if the current step is loading
+  const isCurrentStepLoading = isLoading[currentStep] || false;
+
   return (
-    <StepperContext.Provider value={{ currentStep, totalSteps: steps.length, handleComplete }}>
-      <div className="mx-auto w-full p-6">
+    <StepperContext.Provider value={{ 
+      currentStep, 
+      totalSteps: steps.length, 
+      handleComplete,
+      isStepValid,
+      isCurrentStepValid
+    }}>
+      <div className="mx-auto w-full p-6 my-6">
         <StepIndicator currentStep={currentStep} steps={steps} />
         <ProgressBar currentStep={currentStep} totalSteps={steps.length} />
         {currentStepContent}
@@ -140,6 +210,8 @@ const Stepper: React.FC<StepperProps> = ({ steps, children, handleComplete }) =>
           handlePrev={handlePrev}
           handleNext={handleNext}
           handleComplete={handleComplete}
+          isCurrentStepValid={isCurrentStepValid}
+          isLoading={isCurrentStepLoading}
         />
       </div>
     </StepperContext.Provider>

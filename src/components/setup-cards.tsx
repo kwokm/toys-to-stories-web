@@ -19,56 +19,52 @@ import React from 'react';
 
 const languages = [
   {
-    value: 'russian',
+    value: 'RU',
     label: 'Russian',
   },
   {
-    value: 'arabic',
+    value: 'AR',
     label: 'Arabic',
   },
   {
-    value: 'portuguese',
+    value: 'PT',
     label: 'Portuguese',
   },
   {
-    value: 'turkish',
+    value: 'TR',
     label: 'Turkish',
   },
   {
-    value: 'dutch',
+    value: 'NL',
     label: 'Dutch',
   },
   {
-    value: 'vietnamese',
+    value: 'VN',
     label: 'Vietnamese',
   },
   {
-    value: 'greek',
+    value: 'GR',
     label: 'Greek',
   },
   {
-    value: 'polish',
+    value: 'PL',
     label: 'Polish',
   },
   {
-    value: 'swedish',
+    value: 'SE',
     label: 'Swedish',
   },
   {
-    value: 'latin',
-    label: 'Latin',
-  },
-  {
-    value: 'irish',
+    value: 'IR',
     label: 'Irish',
   },
   {
-    value: 'norwegian',
+    value: 'NO',
     label: 'Norwegian',
   },
 ];
 
-function OtherLanguageSelector({ onSelect }: { onSelect: (language: string) => void }) {
+function OtherLanguageSelector({ onSelect, className }: { onSelect: (language: string) => void, className?: string }) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
 
@@ -76,20 +72,20 @@ function OtherLanguageSelector({ onSelect }: { onSelect: (language: string) => v
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          className={cn("w-[200px] justify-between", className)}
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
         >
           {value
             ? languages.find(language => language.value === value)?.label
-            : 'Select language...'}
+            : 'Other Language...'}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[300px] p-0">
         <Command>
-          <CommandInput placeholder="Search language..." className="h-9" />
+          <CommandInput placeholder="Search language..." className={cn("h-9")} />
           <CommandList>
             <CommandEmpty>No language found.</CommandEmpty>
             <CommandGroup>
@@ -139,8 +135,8 @@ function LanguageCard({
   return (
     <Card
       className={cn(
-        'flex flex-row gap-4 items-center justify-center p-4 cursor-pointer transition-all duration-200',
-        selected ? 'bg-primary/10 border-primary shadow-md' : 'hover:bg-secondary/10'
+        'flex cursor-pointer flex-row items-center justify-center gap-4 p-4 transition-all duration-200',
+        selected ? 'border-primary bg-primary/10 shadow-md' : 'hover:bg-secondary/10'
       )}
       onClick={onSelect}
     >
@@ -188,16 +184,16 @@ function ReadingLevelCard({
   return (
     <Card
       className={cn(
-        'flex flex-col gap-4 w-full p-4 cursor-pointer transition-all duration-200',
-        selected ? 'bg-primary/10 border-primary shadow-md' : 'hover:bg-secondary/10'
+        'flex w-full cursor-pointer flex-col gap-4 p-4 transition-all duration-200',
+        selected ? 'border-primary bg-primary/10 shadow-md' : 'hover:bg-secondary/10'
       )}
       onClick={onSelect}
     >
       <div className="flex flex-col gap-2">
         <p className="text-left text-2xl font-semibold text-slate-800">{title}</p>
         <div className="flex flex-row gap-1">
-          <Baby className="w-3.5 h-3.5" />
-          <p className="leading-none text-sm text-slate-600">{ageRange}</p>
+          <Baby className="h-3.5 w-3.5" />
+          <p className="text-sm leading-none text-slate-600">{ageRange}</p>
         </div>
       </div>
       <p className="text-left text-base text-slate-700">{description}</p>

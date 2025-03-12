@@ -1,4 +1,4 @@
-"use server";
+'use server';
 const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@google/generative-ai');
 const { GoogleAIFileManager } = require('@google/generative-ai/server');
 
@@ -69,7 +69,7 @@ export async function identifyToy(imagePath, imageType) {
     ],
   });
 
-  const result = await chatSession.sendMessage("");
+  const result = await chatSession.sendMessage('');
   console.log(result.response.text());
   return result.response.text();
 }

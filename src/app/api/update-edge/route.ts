@@ -1,14 +1,14 @@
 'use server';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { updateEdgeConfig } from '@/lib/updateEdgeConfig';
+import { UserData } from '@/types/types';
+import fs from 'fs';
+import path from 'path';
 
 export async function POST(request: NextRequest) {
   try {
-    const { key, value } = await request.json();
+    const { UserData } = await request.json();
 
-    // Request from Gemini
-    const toyAudio = await updateEdgeConfig(key, value);
 
     return NextResponse.json({
       success: true,

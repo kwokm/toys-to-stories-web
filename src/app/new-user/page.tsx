@@ -13,6 +13,7 @@ import { ToyData, UserData, VocabData } from '@/types/types';
 import { TypewriterEffectSmooth } from '@/components/typewriter';
 import { redirect } from 'next/navigation';
 import { saveUserDataToLocalStorage } from '@/lib/saveData';
+
 import { processBMP } from '@/lib/utilityFunctions';
 
 
@@ -312,6 +313,13 @@ export default function NewUser() {
           saveUserDataToLocalStorage(finalUserData);
           console.log("USER DATA ON LOCALSTORAGE ");
           console.log(localStorage.getItem("userData"));
+          fetch('/api/soundboard-prep', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(finalUserData),
+          });
           processBMP(newToy);
           console.log("bmp saved");
           setCleaning(false);

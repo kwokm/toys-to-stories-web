@@ -44,5 +44,10 @@ next-env.d.ts
 # bun
 bun.lock
 
+# Ignore everything in tmp directory
 tmp/*
+# But not these files
+!tmp/file_list.txt
+!tmp/userData.json
+
 .env*.local

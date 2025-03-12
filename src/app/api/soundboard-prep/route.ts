@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     
     // Use fs.promises.writeFile for proper Promise support
     // The userData needs to be stringified before writing to file
-    await fs.promises.writeFile("tmp/userData.json", JSON.stringify(requestData), 'utf8');
+    await fs.promises.writeFile("/tmp/userData.json", JSON.stringify(requestData), 'utf8');
 
     return NextResponse.json({
       success: true,

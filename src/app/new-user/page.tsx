@@ -12,8 +12,7 @@ import { Input } from '@/components/ui/input';
 import { ToyData, UserData, VocabData } from '@/types/types';
 import { TypewriterEffectSmooth } from '@/components/typewriter';
 import { redirect } from 'next/navigation';
-import { saveUserDataToFile } from '@/lib/saveData';
-import { set } from 'react-hook-form';
+import { saveUserDataToLocalStorage } from '@/lib/saveData';
 import { processBMP } from '@/lib/utilityFunctions';
 
 
@@ -310,8 +309,9 @@ export default function NewUser() {
           }
           console.log("NEW TOY IS ", newToy);
           let finalUserData = {...userData, toys: [newToy]};
-          saveUserDataToFile(finalUserData);
-          console.log("USER DATA SAVED");
+          saveUserDataToLocalStorage(finalUserData);
+          console.log("USER DATA ON LOCALSTORAGE ");
+          console.log(localStorage.getItem("userData"));
           processBMP(newToy);
           console.log("bmp saved");
           setCleaning(false);
@@ -440,7 +440,6 @@ export default function NewUser() {
           steps={steps}
           handleComplete={() => {
             Cleanup();
-            saveUserDataToFile(userData);
           }}
           isStepValid={[
             userData.language !== null, // Step 1: Language selected

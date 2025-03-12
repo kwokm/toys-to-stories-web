@@ -1,4 +1,4 @@
-import { processImageServerSide, resizeImage } from '@/lib/utilityFunctions';
+import { processImageServerSide } from '@/lib/utilityFunctions';
 
 function main() {
   /*
@@ -8,14 +8,14 @@ function main() {
     const squareSize = 500;
 
     processImageServerSide(inputFilePath, outputFilePath, outputFileName)
-} */
+} 
 
   for (let i = 0; i < 7; i++) {
     const inputFilePath = `/Users/michaelkwok/Code/toys-to-stories-web-next/public/toy-photos/no-bg/${i}-nobg.png`;
     const outputFilePath = '/Users/michaelkwok/Code/toys-to-stories-web-next/public/toy-photos/bmp';
     const outputFileName = `${i}`;
-    processImageServerSide(inputFilePath, outputFilePath, outputFileName);
-  }
+    processImageServerSide(inputFilePath, outputFilePath, outputFileName); 
+  } */
 }
 
 main();

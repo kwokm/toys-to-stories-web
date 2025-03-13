@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 
 // Book color utilities
 export const getRandomBookColor = () => {
@@ -34,6 +35,12 @@ export const getRandomSpineColor = () => {
   return colors[randomIndex];
 };
 
+// Get a random rotation value for subtle variety
+const getRandomRotation = () => {
+  // Return a value between 1 and 3 degrees
+  return Math.floor(Math.random() * 3) + 1;
+};
+
 type BookVisualizationProps = {
   title?: string;
   summary?: string;
@@ -49,15 +56,39 @@ export const BookVisualization = ({
   title,
   summary,
   date,
-  coverColor = getRandomBookColor(),
-  spineColor = getRandomSpineColor(),
+  coverColor,
+  spineColor,
   className,
   children,
   isEmpty = false,
 }: BookVisualizationProps) => {
+  // Generate and memoize random colors and rotation
+  const [bookStyles, setBookStyles] = useState({
+    cover: coverColor || getRandomBookColor(),
+    spine: spineColor || getRandomSpineColor(),
+    rotateZ: getRandomRotation()
+  });
+
+  // Set styles only once on mount
+  useEffect(() => {
+    if (!coverColor || !spineColor) {
+      setBookStyles({
+        cover: coverColor || getRandomBookColor(),
+        spine: spineColor || getRandomSpineColor(),
+        rotateZ: getRandomRotation()
+      });
+    }
+  }, [coverColor, spineColor]);
+
   if (isEmpty) {
     return (
-      <div className={cn("relative h-[350px] w-[250px] opacity-70 blur-[10px]", className)}>
+      <div 
+        className={cn(
+          "relative h-[350px] w-[250px] opacity-70 blur-[2px] rotate-x-1",
+          className
+        )}
+        style={{ transform: `rotateZ(2deg)` }}
+      >
         {/* Book spine */}
         <div className="absolute top-0 left-0 h-full w-[35px] rounded-l-md bg-gray-400 shadow-inner"></div>
 
@@ -85,17 +116,23 @@ export const BookVisualization = ({
   }
 
   return (
-    <div className={cn("relative h-[350px] w-[250px] shadow-xl", className)}>
+    <div 
+      className={cn(
+        "relative h-[350px] w-[250px] shadow-xl rotate-x-1 transition-transform duration-300",
+        className
+      )}
+      style={{ transform: `rotateZ(${bookStyles.rotateZ}deg)` }}
+    >
       {/* Book spine */}
       <div
-        className={`absolute top-0 left-0 h-full w-[35px] rounded-l-md ${spineColor} shadow-inner`}
+        className={`absolute top-0 left-0 h-full w-[35px] rounded-l-md ${bookStyles.spine} shadow-inner`}
       >
         {/* No spine title */}
       </div>
 
       {/* Book cover */}
       <div
-        className={`absolute top-0 right-0 h-full w-[225px] rounded-r-md ${coverColor} flex flex-col p-6`}
+        className={`absolute top-0 right-0 h-full w-[225px] rounded-r-md ${bookStyles.cover} flex flex-col p-6`}
       >
         {/* Book title */}
         {title && (

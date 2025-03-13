@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Home, BookOpen, Volume } from 'lucide-react';
+import { BookOpen, Volume, Icon, Library } from 'lucide-react';
+import { chest } from '@lucide/lab';
 import { Story, VocabWord } from '@/types/types';
 import {
   Carousel,
@@ -169,8 +170,8 @@ export default function StoryModePage() {
     setShowVocab(!showVocab);
   };
 
-  const goHome = () => {
-    router.push('/toys');
+  const goToLibrary = () => {
+    router.push('/stories');
   };
 
   // Function to clean page content by removing page numbers
@@ -194,8 +195,9 @@ export default function StoryModePage() {
         <div className="text-center">
           <p className="text-xl text-red-500">Story not found</p>
           <div>
-            <Button onClick={goHome} className="mt-4 rounded-md bg-orange-500 px-4 py-2 text-white">
-              Go Home
+            <Button onClick={goToLibrary} variant="outline" className="mt-4 rounded-md border-white border-1 px-4 py-2 text-white">
+              <Library className="mr-2 h-4 w-4" />
+              Back to Library
             </Button>
           </div>
         </div>
@@ -221,9 +223,9 @@ export default function StoryModePage() {
       {/* Header */}
       <div className="relative z-10 motion-bg-in-[#fff7ea] border-b border-gray-800 bg-black p-6 motion-ease-out motion-duration-2000">
         <div className="container mx-auto flex items-center justify-between">
-          <Button variant="ghost" onClick={goHome} className="text-white hover:bg-gray-900">
-            <Home className="mr-2 h-4 w-4" />
-            Home
+          <Button variant="outline" onClick={goToLibrary} className="bg-none border border-white text-white hover:bg-gray-900">
+            <Library className="mr-2 h-4 w-4" />
+            Back to Library
           </Button>
 
           <Link href="/toys" className="flex items-center">

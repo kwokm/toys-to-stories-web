@@ -13,6 +13,7 @@ import LanguageSelection from '@/components/setup/LanguageSelection';
 import ReadingLevelSelection from '@/components/setup/ReadingLevelSelection';
 import TakePicture from '@/components/setup/TakePicture';
 import { BringToLife } from '@/components/setup/BringToLife';
+import router from 'next/router';
 
 // Define the steps for the stepper
 const steps = [
@@ -62,7 +63,7 @@ export default function NewUser() {
       saveUserData(userData);
       
       // Redirect to the toys page
-      redirect('/toys');
+      router.push('/toys');
     } catch (error) {
       console.error('Error during user setup:', error);
     } finally {

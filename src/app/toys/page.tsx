@@ -11,8 +11,9 @@ import { Loading } from '@/components/ui/loading';
 import { EmptyState } from '@/components/ui/empty-state';
 import { getUserData, getStories, saveSelectedToys, hasStories, saveUserData } from '@/lib/dataService';
 import { buildToyCards } from '@/components/toys/toy-cards';
-import { UserData } from '@/types/types';
+import { UserData, ToyData } from '@/types/types';
 import { toast } from 'sonner';
+import { EditToyModal } from '@/components/modals/edit-toy-modal';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +33,8 @@ export default function ToysPage() {
   const [hasUserStories, setHasUserStories] = useState(false);
   const [toyToDelete, setToyToDelete] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [toyToEdit, setToyToEdit] = useState<ToyData | null>(null);
 
   // Function to handle toy selection
   const handleToySelection = (toyKey: string) => {
@@ -55,8 +58,48 @@ export default function ToysPage() {
 
   // Function to handle editing a toy
   const handleToyEdit = (toyKey: string) => {
-    // Navigate to the toy edit page with the toy key as a parameter
-    router.push(`/toys/edit/${toyKey}`);
+    if (!userData) return;
+    
+    // Find the toy to edit
+    const toyData = userData.toys.find(toy => toy.key === toyKey);
+    
+    if (toyData) {
+      // Set the toy to edit and open the edit modal
+      setToyToEdit(toyData);
+      setIsEditModalOpen(true);
+    } else {
+      toast.error("Toy not found");
+    }
+  };
+
+  // Function to save edited toy
+  const handleSaveToy = (updatedToy: ToyData) => {
+    if (!userData) return;
+    
+    try {
+      // Update the toy in the user data
+      const updatedToys = userData.toys.map(toy => 
+        toy.key === updatedToy.key ? updatedToy : toy
+      );
+      
+      // Create updated user data
+      const updatedUserData = {
+        ...userData,
+        toys: updatedToys
+      };
+      
+      // Save the updated user data
+      saveUserData(updatedUserData);
+      
+      // Update the local state
+      setUserData(updatedUserData);
+      
+      // Show success message
+      toast.success("Toy updated successfully");
+    } catch (error) {
+      console.error("Error updating toy:", error);
+      toast.error("Failed to update toy");
+    }
   };
 
   // Function to handle deleting a toy
@@ -144,7 +187,7 @@ export default function ToysPage() {
   // Prepare custom actions for the header
   const customActions = (
     <>
-      <div className="flex flex-row gap-2">
+      <div className={`flex ${hasUserStories ? 'flex-row' : 'flex-col'} gap-2`}>
         {hasUserStories && (
           <ActionButton
             icon={<Library className="size-4" />}
@@ -161,12 +204,12 @@ export default function ToysPage() {
           <ScrollText className="mr-1 size-4" />
           Create a Story
         </Button>
-      </div>
-      <p
+        <p
         className={`${selectedToys.length === 0 ? 'opacity-100' : 'opacity-0'} ${hasUserStories ? 'hidden' : 'flex'} my-auto ml-4 text-[13px] transition-opacity duration-300`}
-      >
-        Tap some toys to get started!
-      </p>
+        >
+          Tap some toys to get started!
+        </p>
+      </div>
     </>
   );
 
@@ -191,6 +234,17 @@ export default function ToysPage() {
           handleToyDelete
         )}
       </PageLayout>
+
+      {/* Edit Toy Modal */}
+      <EditToyModal
+        toy={toyToEdit}
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setToyToEdit(null);
+        }}
+        onSave={handleSaveToy}
+      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

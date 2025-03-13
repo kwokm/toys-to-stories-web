@@ -70,7 +70,9 @@ export const ToyCard = ({
   };
 
   const hoverClasses =
-    'hover:rotate-x-4 hover:rotate-z-2 motion-translate-y-loop-10 motion-duration-2000 motion-translate-x-loop-5 motion-ease-in-out rotate-2';
+    'hover:rotate-x-4 hover:rotate-z-2';
+  /* motion-translate-y-loop-10 motion-duration-2000 motion-translate-x-loop-5 motion-ease-in-out rotate-2 */
+
   const selectedClasses =
     'ring-4 ring-orange-500 shadow-lg rotate-x-8 rotate-y-10 rotate-z-3 duration-300';
 

@@ -39,8 +39,36 @@ export function saveUserData(userData: UserData): void {
 
   try {
     localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(userData));
+    // Also save to Vercel Blob
+    saveUserDataToCloud(userData);
   } catch (error) {
     console.error('Error saving user data to localStorage:', error);
+  }
+}
+
+/**
+ * Save user data to Vercel Blob
+ */
+export async function saveUserDataToCloud(userData: UserData): Promise<void> {
+  try {
+    const response = await fetch('/api/user-data/save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userData }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error saving user data to cloud:', errorData);
+      return;
+    }
+
+    const result = await response.json();
+    console.log('User data saved to cloud:', result);
+  } catch (error) {
+    console.error('Error saving user data to cloud:', error);
   }
 }
 
@@ -75,8 +103,36 @@ export function saveStories(stories: Story[]): void {
 
   try {
     localStorage.setItem(STORAGE_KEYS.STORIES, JSON.stringify(stories));
+    // Also save to Vercel Blob
+    saveStoriesToCloud(stories);
   } catch (error) {
     console.error('Error saving stories to localStorage:', error);
+  }
+}
+
+/**
+ * Save stories to Vercel Blob
+ */
+export async function saveStoriesToCloud(stories: Story[]): Promise<void> {
+  try {
+    const response = await fetch('/api/stories/save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ stories }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error saving stories to cloud:', errorData);
+      return;
+    }
+
+    const result = await response.json();
+    console.log('Stories saved to cloud:', result);
+  } catch (error) {
+    console.error('Error saving stories to cloud:', error);
   }
 }
 

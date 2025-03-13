@@ -1,5 +1,19 @@
 import { ReactNode } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { motion } from 'framer-motion';
+
+// Animation variants for book container
+export const storyGridAnimationProps = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.05
+    }
+  }
+};
+
 
 // Define card grid variants using cva
 const cardGridVariants = cva(
@@ -27,6 +41,7 @@ const cardGridVariants = cva(
 export interface CardGridProps extends VariantProps<typeof cardGridVariants> {
   children: ReactNode;
   className?: string;
+  variants?: any;
 }
 
 export function CardGrid({ 
@@ -39,6 +54,23 @@ export function CardGrid({
     <div className={cardGridVariants({ layout, spacing, className })}>
       {children}
     </div>
+  );
+}
+
+export function StoryGrid({ 
+  children, 
+  layout, 
+  spacing,
+  className = "",
+  variants = storyGridAnimationProps
+}: CardGridProps) {
+  return (
+    <motion.div 
+    className={cardGridVariants({ layout, spacing, className })}
+    variants={variants}
+    >
+      {children}
+    </motion.div>
   );
 }
 

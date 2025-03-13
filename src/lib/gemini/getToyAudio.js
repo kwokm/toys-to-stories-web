@@ -53,7 +53,7 @@ async function waitForFilesActive(files) {
 const model = genAI.getGenerativeModel({
   model: 'gemini-2.0-flash',
   systemInstruction:
-    'You are helping us create an AI powered soundboard for language learning.  This is the final part of a multi-prompt chain.  You\'ll receive a message in this format:\n\n\'\n"vocab":[\n{\n"translation": "{translated-word}",\n"word": "{word to find audio for}"\n},\n...\n]\n\'\n\nFor each "word", find the most appropriate .wav file in the attached "file_list.txt".  Please return the exact path in "audio". Do not modify other fields',
+    'You are helping us create an AI powered soundboard for language learning.  This is the final part of a multi-prompt chain.  You\'ll receive a message in this format:\n\n\'\n"vocab":[\n{\n"translation": "{translated-word}",\n"word": "{word to find audio for}"\n},\n...\n]\n\'\n\nFor each "word", find the most appropriate .wav file in the attached "file_list.txt".  Please return the exact path in "audio". Do not modify other fields. Please pretty please be sure to return a path that exists in the file_list.txt',
 });
 
 const generationConfig = {

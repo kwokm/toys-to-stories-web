@@ -47,7 +47,7 @@ function EmptyHome() {
 
   return (
     <motion.div 
-      className="align-center flex h-screen w-screen bg-orange-50"
+      className="align-center flex min-h-screen w-screen pb-24 bg-orange-50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
@@ -102,8 +102,9 @@ function EmptyHome() {
 
 export default function Home() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   
+  /*
   useEffect(() => {
     // Check if user has existing data
     const checkExistingData = () => {
@@ -119,7 +120,8 @@ export default function Home() {
     
     checkExistingData();
   }, [router]);
-
+  */
+ 
   // Show loading state or empty home
-  return isLoading ? <div className="flex h-screen items-center justify-center">Loading...</div> : <EmptyHome />;
+  return isLoading ? <div className="flex min-h-screen items-center justify-center">Loading...</div> : <EmptyHome />;
 }

@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ToyData, UserData } from '@/types/types';
 import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function NewStoryPage() {
   const router = useRouter();
@@ -17,6 +18,45 @@ export default function NewStoryPage() {
   const [isSavingToCloud, setIsSavingToCloud] = useState(false);
   const [cloudSaveSuccess, setCloudSaveSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Set up event listener for beforeunload to handle back navigation
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isGeneratingStory) {
+        // Cancel the story generation
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+        
+        // Show a confirmation dialog
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+
+    // Set up popstate event to handle back button
+    const handlePopState = () => {
+      if (isGeneratingStory) {
+        // Cancel the story generation
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+        
+        // Show toast notification
+        toast.info("Story creation cancelled");
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [isGeneratingStory]);
 
   useEffect(() => {
     // Get user data from localStorage
@@ -107,6 +147,10 @@ export default function NewStoryPage() {
       setIsGeneratingStory(true);
 
       try {
+        // Create a new AbortController for this request
+        abortControllerRef.current = new AbortController();
+        const signal = abortControllerRef.current.signal;
+
         // Create prompt with toy names and titles
         const toyDescriptions = selectedToys
           .map(toy => `${toy.name || 'Unnamed'} the ${toy.title || 'Character'}`)
@@ -121,7 +165,15 @@ export default function NewStoryPage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ prompt }),
+          signal, // Pass the abort signal
         });
+
+        // Check if the request was aborted
+        if (signal.aborted) {
+          console.log('Story generation was cancelled');
+          setIsGeneratingStory(false);
+          return;
+        }
 
         if (!response.ok) {
           throw new Error(`API request failed with status ${response.status}`);
@@ -183,9 +235,17 @@ export default function NewStoryPage() {
                 stories: updatedStories,
                 userId: userId,
               }),
+              signal, // Pass the abort signal
             }),
             timeoutPromise,
           ])) as Response;
+
+          // Check if the request was aborted
+          if (signal.aborted) {
+            console.log('Cloud save was cancelled');
+            setIsSavingToCloud(false);
+            return;
+          }
 
           if (blobResponse.ok) {
             const blobData = await blobResponse.json();
@@ -212,7 +272,14 @@ export default function NewStoryPage() {
 
         // Navigate to the story-mode page
         router.push('/stories/story-mode');
-      } catch (error) {
+      } catch (error: any) {
+        // Check if the error is due to the request being aborted
+        if (error.name === 'AbortError') {
+          console.log('Story generation was cancelled');
+          setIsGeneratingStory(false);
+          return;
+        }
+        
         console.error('Error generating story:', error);
         setError('Failed to generate story. Please try again.');
         setIsGeneratingStory(false);
@@ -221,6 +288,17 @@ export default function NewStoryPage() {
 
     generateStory();
   }, [selectedToys, router, isGeneratingStory]);
+
+  // Add a cancel button
+  const handleCancel = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
+    setIsGeneratingStory(false);
+    router.push('/toys');
+    toast.info("Story creation cancelled");
+  };
 
   if (isLoading) {
     return (
@@ -254,6 +332,16 @@ export default function NewStoryPage() {
         <h1 className="motion-focus mb-8 animate-pulse text-center font-bricolage text-3xl font-semibold text-zinc-500 motion-duration-[500ms]">
           Creating your story...
         </h1>
+
+        {/* Cancel button */}
+        <div className="mb-6 flex justify-center">
+          <button
+            onClick={handleCancel}
+            className="rounded-md border border-orange-300 bg-white px-4 py-2 text-orange-500 transition-colors hover:bg-orange-50"
+          >
+            Cancel
+          </button>
+        </div>
 
         {isSavingToCloud && (
           <div className="mb-4 flex justify-center">

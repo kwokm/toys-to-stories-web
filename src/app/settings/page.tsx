@@ -109,6 +109,13 @@ export default function SettingsPage() {
   // Prepare custom actions for the header
   const customActions = (
     <div className="flex flex-row gap-2">
+        <ActionButton
+          icon={<Icon iconNode={chest} className="size-5" />}
+          label="Back to Toybox"
+          onClick={() => router.push('/toys')}
+          variant="outline"
+          className="ml-auto"
+        />
       <Button
         onClick={handleResetData}
         variant="outline"
@@ -128,7 +135,6 @@ export default function SettingsPage() {
       actions={
         <HeaderActions 
           showSettings={false}
-          showToybox={true}
           customActions={customActions}
         />
       }

@@ -145,3 +145,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+.mesh-gradient {
+  background: radial-gradient(circle at 30% 20%, #ffb347 0%, transparent 35%),
+              radial-gradient(circle at 70% 40%, #ff6b6b 0%, transparent 30%),
+              radial-gradient(circle at 20% 70%, #48c0eb 0%, transparent 5%),
+              radial-gradient(circle at 80% 80%, #9fee82 0%, transparent 35%),
+              radial-gradient(circle at 50% 50%, #d972ff 0%, transparent 5%),
+              radial-gradient(circle at 10% 30%, #ffc857 0%, transparent 40%),
+              radial-gradient(circle at 90% 20%, #66c2a5 0%, transparent 30%);
+  background-color: var(--color-orange-500);
+  /* animation: gradientShift 15s ease-in-out infinite alternate; */
+}
+
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s infinite;
+}

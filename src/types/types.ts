@@ -22,3 +22,30 @@ export interface VocabData {
   translatePronounceUrl?: string;
   audioFile?: string;
 }
+
+export interface VocabWord {
+  Word: string;
+  Definition: string;
+  'Translated Word': string;
+}
+
+export interface Story {
+  id: string;
+  createdAt: string;
+  characters: {
+    key: string;
+    name?: string;
+    title?: string;
+    image: string;
+  }[];
+  Story: {
+    Title: string;
+    'Two Sentence Summary': string;
+    'Life Lesson': string;
+    'Page Contents': string[];
+    'Page Contents Translated'?: string[];
+    'Recommended Vocabulary Words': {
+      'Vocabulary Word': VocabWord[];
+    };
+  };
+}

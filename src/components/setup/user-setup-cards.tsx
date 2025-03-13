@@ -4,7 +4,7 @@ import FlagCascade from '@/components/atoms/flag-cascade';
 import { Card } from '@/components/ui/card';
 import ReactCountryFlag from 'react-country-flag';
 import { cn } from '@/lib/utils';
-import { Check, ChevronsUpDown, Baby } from 'lucide-react';
+import { Check, ChevronsUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import {

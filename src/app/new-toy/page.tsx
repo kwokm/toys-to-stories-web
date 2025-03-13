@@ -15,11 +15,10 @@ import { redirect } from 'next/navigation';
 import { saveUserDataToLocalStorage } from '@/lib/saveData';
 
 import { processBMP } from '@/lib/utilityFunctions';
+import router from 'next/router';
 
 
 const steps = [
-  { label: 'Choose Language' },
-  { label: 'Reading Level' },
   { label: 'Take a Picture' },
   { label: 'Bring Them to Life' },
 ];
@@ -44,118 +43,6 @@ export default function NewUser() {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [animationFirst, setAnimationFirst] = useState<boolean>(true);
   const [cleaning, setCleaning] = useState<boolean>(false);
-
-  const stepContent1 = (
-    <div className="flex flex-col gap-4">
-      <h2 className="pb-4 text-left text-4xl font-medium text-gray-800">
-        What language would you like your child to learn?
-      </h2>
-      <div className="justify-center flex flex-row flex-wrap gap-4">
-        <LanguageCard
-          language="Spanish"
-          countryCodes={['ES', 'MX']}
-          selected={userData.language === 'ES'}
-          onSelect={() => setUserData({ ...userData, language: 'ES' })}
-        />
-        <LanguageCard
-          language="French"
-          countryCodes={['FR']}
-          selected={userData.language === 'FR'}
-          onSelect={() => setUserData({ ...userData, language: 'FR' })}
-        />
-        <LanguageCard
-          language="German"
-          countryCodes={['DE']}
-          selected={userData.language === 'DE'}
-          onSelect={() => setUserData({ ...userData, language: 'DE' })}
-        />
-        <LanguageCard
-          language="Japanese"
-          countryCodes={['JP']}
-          selected={userData.language === 'JP'}
-          onSelect={() => setUserData({ ...userData, language: 'JP' })}
-        />
-        <LanguageCard
-          language="Korean"
-          countryCodes={['KR']}
-          selected={userData.language === 'KR'}
-          onSelect={() => setUserData({ ...userData, language: 'KR' })}
-        />
-        <LanguageCard
-          language="Hindi"
-          countryCodes={['IN']}
-          selected={userData.language === 'IN'}
-          onSelect={() => setUserData({ ...userData, language: 'IN' })}
-        />
-        <LanguageCard
-          language="Chinese (Mandarin)"
-          countryCodes={['CN', 'HK', 'TW']}
-          selected={userData.language === 'CN'}
-          onSelect={() => setUserData({ ...userData, language: 'CN' })}
-        />
-      </div>
-      <OtherLanguageSelector
-      className="mx-auto w-[300px] h-[48px]"
-      onSelect={
-        language => {
-          console.log(language);
-          setUserData({ ...userData, language: language });
-        }
-      } />
-    </div>
-  );
-
-  const stepContent2 = (
-    <div className="flex flex-col gap-4">
-      <h2 className="pb-4 text-left text-4xl font-medium text-gray-800">
-        What stage best describes the child's current reading level?
-      </h2>
-      <div className="flex flex-col gap-4">
-        <ReadingLevelCard
-          title="Exploring Books"
-          description={
-            'Looks at pictures, listens to voices, and occasionally likes to chew on books.'
-          }
-          stepImage="/assets/lvl1.svg"
-          ageRange="0-12 Months"
-          selected={userData.readingLevel === 1}
-          onSelect={() => setUserData({ ...userData, readingLevel: 1 })}
-        />
-        <ReadingLevelCard
-          title="Recognizing Words"
-          stepImage="/assets/lvl2.svg"
-          description="Points at pictures, repeats words nonstop, and loves rhymes even more than you do."
-          ageRange="12-24 Months"
-          selected={userData.readingLevel === 2}
-          onSelect={() => setUserData({ ...userData, readingLevel: 2 })}
-        />
-        <ReadingLevelCard
-          title="Listening to Stories"
-          stepImage="/assets/lvl3.svg"
-          description='Follows simple stories, starts recognizing letters, but may still think "S" is just a cool squiggle.'
-          ageRange="2-3 Years"
-          selected={userData.readingLevel === 3}
-          onSelect={() => setUserData({ ...userData, readingLevel: 3 })}
-        />
-        <ReadingLevelCard
-          title="Learning Letters & Sounds"
-          stepImage="/assets/lvl4.svg"
-          description="Knows their ABCs, understands basic story sequences, predicts what happens next."
-          ageRange="3-4 Years"
-          selected={userData.readingLevel === 4}
-          onSelect={() => setUserData({ ...userData, readingLevel: 4 })}
-        />
-        <ReadingLevelCard
-          title="Starting to Read"
-          stepImage="/assets/lvl5.svg"
-          description='Recognizes words, enjoys a good plot twist, and uses "reading" as an excuse to stay up past bedtime.'
-          ageRange="4-5 Years"
-          selected={userData.readingLevel === 5}
-          onSelect={() => setUserData({ ...userData, readingLevel: 5 })}
-        />
-      </div>
-    </div>
-  );
 
   const stepContent3 = (
     <div className="flex flex-col gap-4 pb-8">
@@ -455,6 +342,7 @@ export default function NewUser() {
           steps={steps}
           handleComplete={() => {
             Cleanup();
+            router.push('/toys');
           }}
           isStepValid={[
             userData.language !== null, // Step 1: Language selected
@@ -469,8 +357,6 @@ export default function NewUser() {
             cleaning, // Step 4: Loading when processing toy data
           ]}
         >
-          <StepContent>{stepContent1}</StepContent>
-          <StepContent>{stepContent2}</StepContent>
           <StepContent>{stepContent3}</StepContent>
           <StepContent><StepContent4 /></StepContent>
         </Stepper>

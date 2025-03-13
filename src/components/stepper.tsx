@@ -3,6 +3,7 @@
 import React, { useState, useCallback, createContext, useContext, ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle, Circle } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from './ui/button';
 
 interface FieldProps {
@@ -48,24 +49,19 @@ const StepIndicator: React.FC<{ currentStep: number; steps: StepProps[] }> = ({
   currentStep,
   steps,
 }) => (
-  <div className="flex justify-between gap-4">
+  <div className="flex gap-10 mx-auto align-center justify-center items-center">
     {steps.map((step, index) => (
       <div key={step.label} className="flex flex-col items-center">
-        <motion.div
-          className={`flex h-10 w-10 items-center justify-center rounded-full ${
-            index <= currentStep ? 'bg-red-500/15 text-red-500' : 'bg-secondary'
-          }`}
-          initial={false}
-          animate={{ scale: index === currentStep ? 1.2 : 1 }}
-        >
-          {index <= currentStep ? <CheckCircle size={20} /> : <Circle size={20} />}
-        </motion.div>
-        <div className="mt-2 text-sm font-medium text-slate-600">{step.label}</div>
+        <div className="flex flex-col items-center">
+          <Image className={`w-10 h-10 transition-all duration-300 ease-in-out ${index <= currentStep ? 'saturate-100' : 'saturate-0'}`} src={`/assets/step${index + 1}.svg`} alt={step.label} width={40} height={40} />
+          {/* <div className="mt-2 text-sm font-medium text-slate-600">{step.label}</div> */}
+        </div>
       </div>
     ))}
   </div>
 );
 
+/*
 const ProgressBar: React.FC<{ currentStep: number; totalSteps: number }> = ({
   currentStep,
   totalSteps,
@@ -76,6 +72,7 @@ const ProgressBar: React.FC<{ currentStep: number; totalSteps: number }> = ({
     animate={{ width: `${Math.min((currentStep / (totalSteps - 1)) * 100 + 1, 100)}%` }}
   />
 );
+*/
 
 // Updated StepContent to use context and display children
 interface StepContentProps {
@@ -84,7 +81,7 @@ interface StepContentProps {
 
 const StepContent: React.FC<StepContentProps> = ({ children }) => {
   return (
-    <div className="my-6 flex min-h-[30vh] w-full justify-center rounded-lg text-center dark:border-gray-600">
+    <div className="motion-preset-focus motion-duration-[500ms] mb-6 mt-10 flex min-h-[30vh] w-full justify-center rounded-lg text-center dark:border-gray-600">
       {children}
     </div>
   );
@@ -124,7 +121,7 @@ const NavigationButtons: React.FC<{
       {currentStep === totalSteps - 1 ? (
         <Button
           variant="default"
-          className="motion-scale-loop-[102%] motion-duration-2500 motion-ease-in-out bg-red-500"
+          className="motion-scale-loop-[104%] motion-duration-2500 motion-ease-in-out bg-red-500"
           onClick={handleComplete}
           disabled={isLoading}
         >
@@ -200,9 +197,9 @@ const Stepper: React.FC<StepperProps> = ({
       isStepValid,
       isCurrentStepValid
     }}>
-      <div className="mx-auto w-full p-6 my-6">
+      <div className="mx-auto w-full p-6 my-6 motion-preset-blur-right motion-duration-[500ms]">
         <StepIndicator currentStep={currentStep} steps={steps} />
-        <ProgressBar currentStep={currentStep} totalSteps={steps.length} />
+        {/*<ProgressBar currentStep={currentStep} totalSteps={steps.length} />*/}
         {currentStepContent}
         <NavigationButtons
           currentStep={currentStep}

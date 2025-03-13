@@ -1,15 +1,19 @@
 import { Card } from '../ui/card';
 import Image from 'next/image';
 import { ToyData } from '@/types/types';
-import { PlusCircleIcon } from 'lucide-react';
+import { PlusCircleIcon, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const buildToyCards = (
   toys: ToyData[],
   selectedToys: string[] = [],
-  onToySelect?: (toyKey: string) => void
+  onToySelect?: (toyKey: string) => void,
+  onToyEdit?: (toyKey: string) => void,
+  onToyDelete?: (toyKey: string) => void
 ) => {
   return (
     <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3">
@@ -19,6 +23,8 @@ export const buildToyCards = (
           toy={toy}
           isSelected={selectedToys.includes(toy.key)}
           onSelect={onToySelect}
+          onEdit={onToyEdit}
+          onDelete={onToyDelete}
         />
       ))}
       <EmptyToyCard variant="plus" />
@@ -30,16 +36,36 @@ export const ToyCard = ({
   toy,
   isSelected = false,
   onSelect,
+  onEdit,
+  onDelete,
   className,
 }: {
   toy: ToyData;
   isSelected?: boolean;
   onSelect?: (toyKey: string) => void;
+  onEdit?: (toyKey: string) => void;
+  onDelete?: (toyKey: string) => void;
   className?: string;
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   const handleClick = () => {
     if (onSelect) {
       onSelect(toy.key);
+    }
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card selection when clicking edit
+    if (onEdit) {
+      onEdit(toy.key);
+    }
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card selection when clicking delete
+    if (onDelete) {
+      onDelete(toy.key);
     }
   };
 
@@ -48,15 +74,20 @@ export const ToyCard = ({
   const selectedClasses =
     'ring-4 ring-orange-500 shadow-lg rotate-x-8 rotate-y-10 rotate-z-3 duration-300';
 
+  // Show action buttons when hovered or selected
+  const showActions = isHovered || isSelected;
+
   return (
     <Card
       className={cn(
         `flex rotate-2 cursor-pointer flex-col items-center gap-3 rounded-xs p-8 transition-all duration-500 ${
           isSelected ? selectedClasses : hoverClasses
-        }`,
+        } relative group`,
         className
       )}
       onClick={handleClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {toy.image ? (
         <Image
@@ -64,7 +95,7 @@ export const ToyCard = ({
           alt={`${toy.name} the ${toy.title}`}
           width={160}
           height={160}
-          className="size-40 rounded-md object-cover"
+          className="size-40 rounded-md object-cover transition-all duration-300 group-hover:shadow-md"
         />
       ) : (
         <div className="h-20 w-20 rounded-md border border-gray-300 bg-gray-100"></div>
@@ -78,6 +109,54 @@ export const ToyCard = ({
           {toy.title}
         </div>
       </div>
+
+      {/* Action buttons - visible on hover or when selected */}
+      <AnimatePresence>
+        {showActions && (
+          <motion.div 
+            className="absolute bottom-3 right-3 flex gap-2"
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+            transition={{ duration: 0.2 }}
+          >
+            {onEdit && (
+              <motion.div
+                initial={{ x: 10, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.05 }}
+              >
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  className="h-8 w-8 rounded-full bg-white hover:bg-white shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110"
+                  onClick={handleEdit}
+                  title="Edit toy"
+                >
+                  <Pencil className="h-4 w-4 text-orange-600" />
+                </Button>
+              </motion.div>
+            )}
+            {onDelete && (
+              <motion.div
+                initial={{ x: 10, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.1 }}
+              >
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  className="h-8 w-8 rounded-full bg-white hover:bg-white shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110"
+                  onClick={handleDelete}
+                  title="Delete toy"
+                >
+                  <Trash2 className="h-4 w-4 text-red-600" />
+                </Button>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   );
 };

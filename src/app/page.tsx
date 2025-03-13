@@ -8,6 +8,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { DemoDataModal } from '@/components/DemoDataModal';
+import { motion } from 'framer-motion';
+import { getUserData, hasStories } from '@/lib/dataService';
 
 function EmptyHome() {
   const router = useRouter();
@@ -44,7 +46,12 @@ function EmptyHome() {
   };
 
   return (
-    <div className="align-center flex h-screen w-screen bg-orange-50">
+    <motion.div 
+      className="align-center flex h-screen w-screen bg-orange-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="align-center mx-auto my-auto flex flex-col items-center justify-center gap-26">
         <div className="mx-auto flex flex-col items-center justify-center gap-14">
           <Image
@@ -89,40 +96,30 @@ function EmptyHome() {
         onClose={() => setIsDemoModalOpen(false)}
         onDataLoaded={handleDemoDataLoaded}
       />
-    </div>
+    </motion.div>
   );
 }
 
 export default function Home() {
-  /*
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // Check if localStorage is available (only runs in browser)
-    if (typeof window !== 'undefined') {
-      try {
-        // Try to get user data from localStorage
-        const userData = localStorage.getItem('userData');
-        
-        if (userData) {
-          const parsedData = JSON.parse(userData);
-          
-          // Check if there are any toys in the userData
-          if (parsedData.toys && parsedData.toys.length > 0) {
-            // Redirect to toys page if there are toys
-            router.push('/toys');
-          }
-        }
-      } catch (error) {
-        console.error('Error accessing localStorage:', error);
-      }
+    // Check if user has existing data
+    const checkExistingData = () => {
+      const userData = getUserData();
       
-      setIsLoading(false);
-    }
+      if (userData && userData.toys && userData.toys.length > 0) {
+        // Redirect to toys page if there are toys
+        router.push('/toys');
+      } else {
+        setIsLoading(false);
+      }
+    };
+    
+    checkExistingData();
   }, [router]);
 
   // Show loading state or empty home
-  return isLoading ? <div>Loading...</div> : <EmptyHome />; */
-  return <EmptyHome />;
+  return isLoading ? <div className="flex h-screen items-center justify-center">Loading...</div> : <EmptyHome />;
 }

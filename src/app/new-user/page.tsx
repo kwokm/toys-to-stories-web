@@ -5,8 +5,8 @@ import Image from 'next/image';
 import Stepper, { StepContent } from '@/components/setup/stepper';
 import { ToyData, UserData } from '@/types/types';
 import { redirect } from 'next/navigation';
-import { cleanupUserData } from '@/lib/cleanup';
-import { saveUserDataToLocalStorage } from '@/lib/saveData';
+import { motion } from 'framer-motion';
+import { saveUserData } from '@/lib/dataService';
 
 // Import the step components
 import LanguageSelection from '@/components/setup/LanguageSelection';
@@ -42,8 +42,41 @@ export default function NewUser() {
   const [animationFirst, setAnimationFirst] = useState<boolean>(true);
   const [cleaning, setCleaning] = useState<boolean>(false);
 
+  // Function to handle completion of the setup process
+  const handleComplete = async () => {
+    try {
+      setCleaning(true);
+      
+      // Prepare the soundboard with the user data
+      await fetch('/api/soundboard-prep', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userData,
+        }),
+      });
+      
+      // Save the user data using our dataService
+      saveUserData(userData);
+      
+      // Redirect to the toys page
+      redirect('/toys');
+    } catch (error) {
+      console.error('Error during user setup:', error);
+    } finally {
+      setCleaning(false);
+    }
+  };
+
   return (
-    <div className="flex min-h-screen w-screen bg-orange-50">
+    <motion.div 
+      className="flex min-h-screen w-screen bg-orange-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="mx-4 flex w-full flex-col gap-4 pt-16 lg:mx-24">
         <div className="mx-auto h-20 overflow-hidden rounded-md">
           <Image
@@ -59,11 +92,7 @@ export default function NewUser() {
         </div>
         <Stepper
           steps={steps}
-          handleComplete={() => {
-            cleanupUserData(userData, setCleaning).then(() => {
-              redirect('/toys');
-            });
-          }}
+          handleComplete={handleComplete}
           isStepValid={[
             userData.language !== null, // Step 1: Language selected
             userData.readingLevel !== null, // Step 2: Reading level selected
@@ -104,6 +133,6 @@ export default function NewUser() {
           </StepContent>
         </Stepper>
       </div>
-    </div>
+    </motion.div>
   );
 }

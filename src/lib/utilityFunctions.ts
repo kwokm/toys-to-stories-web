@@ -1,4 +1,4 @@
-"use server";
+'use server';
 
 import { Jimp, ResizeStrategy } from 'jimp';
 import Replicate from 'replicate';
@@ -27,10 +27,7 @@ export async function removeBackground(
 
 const squareSize = 120;
 
-export async function processImageServerSide(
-  inputURL: string,
-  outputFileName: string
-) {
+export async function processImageServerSide(inputURL: string, outputFileName: string) {
   const replicate = new Replicate();
 
   const input = {

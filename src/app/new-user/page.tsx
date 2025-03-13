@@ -1,6 +1,6 @@
 'use client';
 import { twMerge } from 'tailwind-merge';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Stepper, { StepContent } from '@/components/stepper';
 import { LanguageCard, OtherLanguageSelector, ReadingLevelCard } from '@/components/setup-cards';
 import Image from 'next/image';
@@ -14,40 +14,16 @@ import { TypewriterEffectSmooth } from '@/components/typewriter';
 import { redirect } from 'next/navigation';
 import { saveUserDataToLocalStorage } from '@/lib/saveData';
 
-import { processBMP } from '@/lib/utilityFunctions';
+// Step 1: Language Selection Component
+interface LanguageSelectionProps {
+  userData: UserData;
+  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
+}
 
-
-const steps = [
-  { label: 'Choose Language' },
-  { label: 'Reading Level' },
-  { label: 'Take a Picture' },
-  { label: 'Bring Them to Life' },
-];
-
-export default function NewUser() {
-  const [userData, setUserData] = useState<UserData>({
-    language: null,
-    readingLevel: null,
-    toys: [
-      {
-        name: '',
-        title: '',
-        vocab: [],
-        key: '',
-        image: '',
-      }
-    ],
-  });
-
-
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [animationFirst, setAnimationFirst] = useState<boolean>(true);
-  const [cleaning, setCleaning] = useState<boolean>(false);
-
-  const stepContent1 = (
+const LanguageSelection: React.FC<LanguageSelectionProps> = ({ userData, setUserData }) => {
+  return (
     <div className="flex flex-col gap-4">
-      <h2 className="pb-4 text-left text-4xl font-medium text-gray-800">
+      <h2 className="pb-2 text-[28px] font-[700] text-center text-gray-800">
         What language would you like your child to learn?
       </h2>
       <div className="justify-center flex flex-row flex-wrap gap-4">
@@ -95,27 +71,32 @@ export default function NewUser() {
         />
       </div>
       <OtherLanguageSelector
-      className="mx-auto w-[300px] h-[48px]"
-      onSelect={
-        language => {
+        className="mx-auto w-[300px] h-[48px]"
+        onSelect={language => {
           console.log(language);
           setUserData({ ...userData, language: language });
-        }
-      } />
+        }}
+      />
     </div>
   );
+};
 
-  const stepContent2 = (
+// Step 2: Reading Level Selection Component
+interface ReadingLevelSelectionProps {
+  userData: UserData;
+  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
+}
+
+const ReadingLevelSelection: React.FC<ReadingLevelSelectionProps> = ({ userData, setUserData }) => {
+  return (
     <div className="flex flex-col gap-4">
-      <h2 className="pb-4 text-left text-4xl font-medium text-gray-800">
+      <h2 className="pb-2 text-[28px] font-[700] text-center text-gray-800">
         What stage best describes the child's current reading level?
       </h2>
       <div className="flex flex-col gap-4">
         <ReadingLevelCard
           title="Exploring Books"
-          description={
-            'Looks at pictures, listens to voices, and occasionally likes to chew on books.'
-          }
+          description="Looks at pictures, listens to voices, and occasionally likes to chew on books."
           stepImage="/assets/lvl1.svg"
           ageRange="0-12 Months"
           selected={userData.readingLevel === 1}
@@ -156,10 +137,29 @@ export default function NewUser() {
       </div>
     </div>
   );
+};
 
-  const stepContent3 = (
+// Step 3: Take Picture Component
+interface TakePictureProps {
+  userData: UserData;
+  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
+  capturedImage: string | null;
+  setCapturedImage: React.Dispatch<React.SetStateAction<string | null>>;
+  isProcessing: boolean;
+  setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const TakePicture: React.FC<TakePictureProps> = ({
+  userData,
+  setUserData,
+  capturedImage,
+  setCapturedImage,
+  isProcessing,
+  setIsProcessing,
+}) => {
+  return (
     <div className="flex flex-col gap-4 pb-8">
-      <h2 className="pb-0 text-left text-4xl font-semibold text-gray-800">
+      <h2 className="pb-4 text-3xl font-[700] text-center text-gray-800">
         Let's bring your child's favorite toy to life!
       </h2>
       <p className="text-left text-base text-gray-600">
@@ -202,9 +202,9 @@ export default function NewUser() {
             let newToy: ToyData = {
               key: res[0].key,
               image: res[0].url,
-            }
-            setUserData(prevUserData => ({ 
-              ...prevUserData, 
+            };
+            setUserData(prevUserData => ({
+              ...prevUserData,
               toys: [newToy],
             }));
             console.log(res[0].url);
@@ -223,10 +223,7 @@ export default function NewUser() {
               .then(response => response.json())
               .then(data => {
                 console.log('Image downloaded to server:', data);
-                // You can store the local server path if needed
-                // For example, you might want to use this path instead of the uploadthing URL
                 if (data.success) {
-                  // console.log('Local server path:', data.filepath);
                   const geminiIdentifyData = JSON.parse(data.geminiIdentify);
                   const geminiVocabularyData = JSON.parse(data.geminiVocabulary);
                   newToy = {
@@ -235,16 +232,16 @@ export default function NewUser() {
                     vocab: geminiVocabularyData.VocabData,
                     key: res[0].key,
                     image: res[0].url,
-                  }
+                  };
 
                   setUserData(prevUserData => ({
                     ...prevUserData,
                     toys: [newToy],
                   }));
-                  
+
                   console.log("HELLO THE DATA IS ", data);
                   console.log("current userdata is ", userData);
-                  
+
                   // Set processing to false after updating the state
                   setIsProcessing(false);
                 }
@@ -279,7 +276,216 @@ export default function NewUser() {
       </div>
     </div>
   );
-  
+};
+
+// Step 4: Bring to Life Component
+interface BringToLifeProps {
+  userData: UserData;
+  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
+  capturedImage: string | null;
+  animationFirst: boolean;
+  setAnimationFirst: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const BringToLife: React.FC<BringToLifeProps> = ({
+  userData,
+  setUserData,
+  capturedImage,
+  animationFirst,
+  setAnimationFirst,
+}) => {
+  // Animation effect
+  useEffect(() => {
+    // Set a timeout to change the animation state after a set time.
+    const timer = setTimeout(() => {
+      setAnimationFirst(false);
+    }, 5500);
+
+    // Clean up the timeout if the component unmounts
+    return () => clearTimeout(timer);
+  }, []); // Empty dependency array means this runs once when the component mounts
+
+  // Define animation classes based on the animationFirst state
+  const typewriter = (
+    <div className="leading-none text-2xl font-weight-400 text-gray-600 mt-4 pb-2">
+      I found four vocabulary words for your child to learn.
+    </div>
+  );
+  const titleClass = animationFirst ? "motion-preset-blur-right-sm motion-duration-[1200ms]" : "";
+  const adjustClass = animationFirst
+    ? "motion-delay-[5000ms] motion-preset-blur-up-md motion-duration-[500ms]"
+    : "";
+  const cardClass = animationFirst
+    ? "starting:shadow-base starting:rotate-z-2 starting:rotate-y-0 starting:rotate-x-0 delay-[1000ms] starting:opacity-0 transition-all duration-1500 motion-delay-[1200ms]"
+    : "";
+  const gridClass = animationFirst
+    ? "motion-delay-[1000ms] motion-preset-fade motion-duration-[2000ms]"
+    : "";
+
+  // Safely access vocab data with fallbacks for undefined values
+  const currentToy = userData.toys && userData.toys.length > 0 ? userData.toys[0] : null;
+  const vocabData = currentToy?.vocab || [];
+
+  return (
+    <div className="flex flex-col gap-4 motion-preset-fade-in motion-duration-[500ms]">
+      <div className={`flex flex-col gap-0 mb-4 ${titleClass}`}>
+        {/* Title */}
+        <h1 className={`text-[80px] leading-none font-bold text-gray-800 ${titleClass}`}>Hello!</h1>
+        {animationFirst ? (
+          <TypewriterEffectSmooth
+            className="mt-4 mb-0 mx-auto"
+            words={[
+              {
+                text: "I found four vocabulary words for your child to learn.",
+                className: "leading-none text-2xl font-weight-400 text-gray-600",
+              },
+            ]}
+          />
+        ) : (
+          typewriter
+        )}
+
+        <div className={`text-lg font-weight-400 text-gray-400 ${adjustClass}`}>
+          Feel free to adjust the words or my name!
+        </div>
+      </div>
+      {/* Grid */}
+      <div className="my-4 mx-auto grid gap-40 grid-cols-2">
+        {/* Column 1 */}
+        {/* Toy Polaroid */}
+        <Card
+          className={`opacity-100 rotate-x-15 rotate-y-0 rotate-z-5 shadow-xl motion-translate-y-loop-10 motion-duration-2000 motion-translate-x-loop-5 motion-ease-in-out rotate-2 flex w-96 flex-col gap-3 items-center rounded-xs ${cardClass}`}
+        >
+          {capturedImage ? (
+            <Image
+              src={capturedImage}
+              alt="Captured toy"
+              width={300}
+              height={300}
+              className="rounded-md object-cover h-75 w-75"
+            />
+          ) : (
+            <div className="h-75 w-75 bg-gray-100 rounded-md border border-gray-300"></div>
+          )}
+          <div className="flex flex-col gap-0 items-center">
+            <Input
+              className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 font-lily h-auto font-bold md:text-4xl border-none"
+              type="text"
+              placeholder={currentToy?.name || ''}
+              onChange={(e) => {
+                if (currentToy) {
+                  const updatedToy = { ...currentToy, name: e.target.value };
+                  setUserData(prev => ({ ...prev, toys: [updatedToy] }));
+                }
+              }}
+            />
+            <p className="text-gray-400 mt-[-2]">{currentToy?.name && 'the'}</p>
+            <Input
+              className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 h-auto font-medium md:text-xl border-none"
+              type="text"
+              placeholder={currentToy?.title || ''}
+              onChange={(e) => {
+                if (currentToy) {
+                  const updatedToy = { ...currentToy, title: e.target.value };
+                  setUserData(prev => ({ ...prev, toys: [updatedToy] }));
+                }
+              }}
+            />
+          </div>
+        </Card>
+        {/* End Column 1 */}
+
+        {/* Column 2 */}
+        <div className={`flex flex-col gap-4 w-full my-auto ${gridClass}`}>
+          <Button variant="outline" className="self-end">
+            <Pencil></Pencil>
+          </Button>
+          <Input
+            className="w-full"
+            type="text"
+            placeholder={vocabData[0]?.word || ''}
+            onChange={(e) => {
+              if (currentToy && currentToy.vocab && currentToy.vocab.length > 0) {
+                const updatedVocab = [...currentToy.vocab];
+                updatedVocab[0] = { ...updatedVocab[0], word: e.target.value };
+                const updatedToy = { ...currentToy, vocab: updatedVocab };
+                setUserData(prev => ({ ...prev, toys: [updatedToy] }));
+              }
+            }}
+          />
+          <Input
+            className="w-full"
+            type="text"
+            placeholder={vocabData[1]?.word || ''}
+            onChange={(e) => {
+              if (currentToy && currentToy.vocab && currentToy.vocab.length > 1) {
+                const updatedVocab = [...currentToy.vocab];
+                updatedVocab[1] = { ...updatedVocab[1], word: e.target.value };
+                const updatedToy = { ...currentToy, vocab: updatedVocab };
+                setUserData(prev => ({ ...prev, toys: [updatedToy] }));
+              }
+            }}
+          />
+          <Input
+            className="w-full"
+            type="text"
+            placeholder={vocabData[2]?.word || ''}
+            onChange={(e) => {
+              if (currentToy && currentToy.vocab && currentToy.vocab.length > 2) {
+                const updatedVocab = [...currentToy.vocab];
+                updatedVocab[2] = { ...updatedVocab[2], word: e.target.value };
+                const updatedToy = { ...currentToy, vocab: updatedVocab };
+                setUserData(prev => ({ ...prev, toys: [updatedToy] }));
+              }
+            }}
+          />
+          <Input
+            className="w-full"
+            type="text"
+            placeholder={vocabData[3]?.word || ''}
+            onChange={(e) => {
+              if (currentToy && currentToy.vocab && currentToy.vocab.length > 3) {
+                const updatedVocab = [...currentToy.vocab];
+                updatedVocab[3] = { ...updatedVocab[3], word: e.target.value };
+                const updatedToy = { ...currentToy, vocab: updatedVocab };
+                setUserData(prev => ({ ...prev, toys: [updatedToy] }));
+              }
+            }}
+          />
+        </div>
+        {/* End Column 2 */}
+      </div>
+    </div>
+  );
+};
+
+// Main component
+const steps = [
+  { label: 'Choose Language' },
+  { label: 'Reading Level' },
+  { label: 'Take a Picture' },
+  { label: 'Bring Them to Life' },
+];
+
+export default function NewUser() {
+  const [userData, setUserData] = useState<UserData>({
+    language: null,
+    readingLevel: null,
+    toys: [
+      {
+        name: '',
+        title: '',
+        vocab: [],
+        key: '',
+        image: '',
+      },
+    ],
+  });
+
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [animationFirst, setAnimationFirst] = useState<boolean>(true);
+  const [cleaning, setCleaning] = useState<boolean>(false);
 
   async function Cleanup() {
     setCleaning(true);
@@ -324,8 +530,7 @@ export default function NewUser() {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              userData: finalUserData,
-              userDataBlobUrl: userData.userDataBlobUrl
+              userData: finalUserData
             }),
           });
           console.log("bmp saved");
@@ -341,99 +546,6 @@ export default function NewUser() {
         setCleaning(false);
         throw error; // Re-throw the error so it can be caught by the caller
       });   
-  };
-
-
-  // Convert stepContent4 from a function to a React component
-  const StepContent4 = () => {
-
-    // Animation effect
-    useEffect(() => {
-      // Set a timeout to change the animation state after a set time.
-      const timer = setTimeout(() => {
-        setAnimationFirst(false);
-      }, 5500); 
-      
-      // Clean up the timeout if the component unmounts
-      return () => clearTimeout(timer);
-    }, []); // Empty dependency array means this runs once when the component mounts
-    
-    // Define animation classes based on the animationFirst state
-    const typewriter = <div className="leading-none text-2xl font-weight-400 text-gray-600 mt-4 pb-2">I found four vocabulary words for your child to learn.</div>;
-    const titleClass = animationFirst ? "motion-preset-blur-right-sm motion-duration-[1200ms]" : "";
-    const adjustClass = animationFirst ? "motion-delay-[5000ms] motion-preset-blur-up-md motion-duration-[500ms]" : "";
-    const cardClass = animationFirst ? "starting:shadow-base starting:rotate-z-2 starting:rotate-y-0 starting:rotate-x-0 delay-[1000ms] starting:opacity-0 transition-all duration-1500 motion-delay-[1200ms]" : "";
-    const gridClass = animationFirst ? "motion-delay-[1000ms] motion-preset-fade motion-duration-[2000ms]" : "";
-    
-    // Safely access vocab data with fallbacks for undefined values
-    const currentToy = userData.toys && userData.toys.length > 0 ? userData.toys[0] : null;
-    const vocabData = currentToy?.vocab || [];
-    
-    return (
-      <div className="flex flex-col gap-4 motion-preset-fade-in motion-duration-[500ms]">
-        <div className={`flex flex-col gap-0 mb-4 ${titleClass}`}>
-          {/* Title */}
-          <h1 className={`text-[80px] leading-none font-bold text-gray-800 ${titleClass}`}>Hello!</h1>
-          {animationFirst ? <TypewriterEffectSmooth className="mt-4 mb-0 mx-auto" words={[{text: "I found four vocabulary words for your child to learn.", className: "leading-none text-2xl font-weight-400 text-gray-600"}]} /> : typewriter}
-          
-          <div className={`text-lg font-weight-400 text-gray-400 ${adjustClass}`}>Feel free to adjust the words or my name!</div>
-        </div>
-        {/* Grid */}
-        <div className="my-4 mx-auto grid gap-40 grid-cols-2">
-          {/* Column 1 */}
-          {/* Toy Polaroid */}
-          <Card className={`opacity-100 rotate-x-15 rotate-y-0 rotate-z-5 shadow-xl motion-translate-y-loop-10 motion-duration-2000 motion-translate-x-loop-5 motion-ease-in-out rotate-2 flex w-96 flex-col gap-3 items-center rounded-xs ${cardClass}`}>
-            {capturedImage ? (
-              <Image
-                src={capturedImage}
-                alt="Captured toy"
-                width={300}
-                height={300}
-                className="rounded-md object-cover h-75 w-75"
-              />
-            ) : (
-              <div className="h-75 w-75 bg-gray-100 rounded-md border border-gray-300"></div>
-            )}
-            <div className="flex flex-col gap-0 items-center">
-              <Input
-                className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 font-lily h-auto font-bold md:text-4xl border-none"
-                type="text"
-                placeholder={currentToy?.name || ''}
-              />
-              <p className="text-gray-400 mt-[-2]">{currentToy?.name && 'the'}</p>
-              <Input
-                className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 h-auto font-medium md:text-xl border-none"
-                type="text"
-                placeholder={currentToy?.title || ''}
-              />
-            </div>
-          </Card>
-          {/* End Column 1 */}
-
-          {/* Column 2 */}
-          <div className={`flex flex-col gap-4 w-full my-auto ${gridClass}`}>
-            <Button variant="outline" className="self-end"><Pencil></Pencil></Button>
-            <Input
-              className="w-full"
-              type="text"
-              placeholder={vocabData[0]?.word || ''} />
-            <Input
-              className="w-full"
-              type="text"
-              placeholder={vocabData[1]?.word || ''} />
-            <Input
-              className="w-full"
-              type="text"
-              placeholder={vocabData[2]?.word || ''} />
-            <Input
-              className="w-full"
-              type="text"
-              placeholder={vocabData[3]?.word || ''} />
-          </div>
-          {/* End Column 2 */}
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -469,10 +581,31 @@ export default function NewUser() {
             cleaning, // Step 4: Loading when processing toy data
           ]}
         >
-          <StepContent>{stepContent1}</StepContent>
-          <StepContent>{stepContent2}</StepContent>
-          <StepContent>{stepContent3}</StepContent>
-          <StepContent><StepContent4 /></StepContent>
+          <StepContent>
+            <LanguageSelection userData={userData} setUserData={setUserData} />
+          </StepContent>
+          <StepContent>
+            <ReadingLevelSelection userData={userData} setUserData={setUserData} />
+          </StepContent>
+          <StepContent>
+            <TakePicture
+              userData={userData}
+              setUserData={setUserData}
+              capturedImage={capturedImage}
+              setCapturedImage={setCapturedImage}
+              isProcessing={isProcessing}
+              setIsProcessing={setIsProcessing}
+            />
+          </StepContent>
+          <StepContent>
+            <BringToLife
+              userData={userData}
+              setUserData={setUserData}
+              capturedImage={capturedImage}
+              animationFirst={animationFirst}
+              setAnimationFirst={setAnimationFirst}
+            />
+          </StepContent>
         </Stepper>
       </div>
     </div>

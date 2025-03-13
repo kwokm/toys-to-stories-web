@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Button } from '@/components/ui/button';
 import { Shapes } from 'lucide-react';
@@ -11,21 +11,29 @@ function EmptyHome() {
   return (
     <div className="align-center flex h-screen w-screen bg-orange-50">
       <div className="align-center mx-auto my-auto flex flex-col items-center justify-center gap-26">
-        <div className="mx-auto gap-14 flex flex-col items-center justify-center">
-        <Image
-          className="mx-auto rounded-md"
-          src="/assets/ToysToStoriesColoredText.svg"
-          alt="banner"
-          width={554}
-          height={128}
-        />
-        <Image 
-          className="mx-auto rounded-md"
-          src="/assets/HomeImage.webp"
-          alt="Welcome to Toys to Stories!"
-          width={554}
-          height={554}
-        />
+        <div className="mx-auto flex flex-col items-center justify-center gap-14">
+          <Image
+            className="mx-auto rounded-md"
+            src="/assets/ToysToStoriesColoredText.svg"
+            alt="banner"
+            width={554}
+            height={128}
+          />
+          <div className="mb-4 text-center">
+            <h2 className="mb-2 text-3xl font-bold" style={{ fontFamily: 'var(--font-bricolage)' }}>
+              Turn Toys Into Stories
+            </h2>
+            <p className="text-lg" style={{ fontFamily: 'var(--font-figtree)' }}>
+              Create magical stories with your favorite toys
+            </p>
+          </div>
+          <Image
+            className="mx-auto rounded-md"
+            src="/assets/HomeImage.webp"
+            alt="Welcome to Toys to Stories!"
+            width={554}
+            height={554}
+          />
         </div>
         <Link href="/new-user">
           <Button size="lg" className="w-64 py-6 text-lg">

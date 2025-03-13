@@ -51,10 +51,10 @@ export async function POST(request: NextRequest) {
     // Return the path that can be used to access the file
     const publicPath = `${uploadDir}/${filename}`;
     const identifyToyResult = await identifyToy(`${publicPath}`, `image/${extension}`);
-    console.log("JSON IS", JSON.parse(identifyToyResult));
+    console.log('JSON IS', JSON.parse(identifyToyResult));
     const toyTitle = JSON.parse(identifyToyResult).Item;
     const language = JSON.parse(identifyToyResult).language;
-    const chooseVocabularyResult = await chooseVocabulary(toyTitle, "Spanish");
+    const chooseVocabularyResult = await chooseVocabulary(toyTitle, 'Spanish');
 
     return NextResponse.json({
       success: true,

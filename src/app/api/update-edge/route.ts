@@ -9,7 +9,6 @@ export async function POST(request: NextRequest) {
   try {
     const { UserData } = await request.json();
 
-
     return NextResponse.json({
       success: true,
     });

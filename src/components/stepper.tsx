@@ -31,7 +31,7 @@ const defaultStepperContext: StepperContextType = {
   totalSteps: 0,
   handleComplete: () => {},
   isStepValid: [],
-  isCurrentStepValid: false
+  isCurrentStepValid: false,
 };
 
 const StepperContext = createContext<StepperContextType>(defaultStepperContext);
@@ -49,11 +49,17 @@ const StepIndicator: React.FC<{ currentStep: number; steps: StepProps[] }> = ({
   currentStep,
   steps,
 }) => (
-  <div className="flex gap-10 mx-auto align-center justify-center items-center">
+  <div className="align-center mx-auto flex items-center justify-center gap-10">
     {steps.map((step, index) => (
       <div key={step.label} className="flex flex-col items-center">
         <div className="flex flex-col items-center">
-          <Image className={`w-10 h-10 transition-all duration-300 ease-in-out ${index <= currentStep ? 'saturate-100' : 'saturate-0'}`} src={`/assets/step${index + 1}.svg`} alt={step.label} width={40} height={40} />
+          <Image
+            className={`h-10 w-10 transition-all duration-300 ease-in-out ${index <= currentStep ? 'saturate-100' : 'saturate-0'}`}
+            src={`/assets/step${index + 1}.svg`}
+            alt={step.label}
+            width={40}
+            height={40}
+          />
           {/* <div className="mt-2 text-sm font-medium text-slate-600">{step.label}</div> */}
         </div>
       </div>
@@ -81,7 +87,7 @@ interface StepContentProps {
 
 const StepContent: React.FC<StepContentProps> = ({ children }) => {
   return (
-    <div className="motion-preset-focus motion-duration-[500ms] mb-6 mt-10 flex min-h-[30vh] w-full justify-center rounded-lg text-center dark:border-gray-600">
+    <div className="mt-8 mb-6 flex min-h-[30vh] w-full motion-preset-focus justify-center rounded-lg text-center motion-duration-[500ms] dark:border-gray-600">
       {children}
     </div>
   );
@@ -97,14 +103,14 @@ const NavigationButtons: React.FC<{
   handleComplete: () => void;
   isCurrentStepValid: boolean;
   isLoading?: boolean;
-}> = ({ 
-  currentStep, 
-  totalSteps, 
-  handlePrev, 
-  handleNext, 
-  handleComplete, 
+}> = ({
+  currentStep,
+  totalSteps,
+  handlePrev,
+  handleNext,
+  handleComplete,
   isCurrentStepValid,
-  isLoading = false
+  isLoading = false,
 }) => (
   <div className="flex flex-col items-end gap-2">
     <div className="flex justify-end gap-3">
@@ -121,7 +127,7 @@ const NavigationButtons: React.FC<{
       {currentStep === totalSteps - 1 ? (
         <Button
           variant="default"
-          className="motion-scale-loop-[104%] motion-duration-2500 motion-ease-in-out bg-red-500"
+          className="motion-scale-loop-[104%] bg-red-500 motion-ease-in-out motion-duration-2500"
           onClick={handleComplete}
           disabled={isLoading}
         >
@@ -129,8 +135,8 @@ const NavigationButtons: React.FC<{
         </Button>
       ) : null}
     </div>
-   
-   {/* HELPER TEXT - NOT BEING USED
+
+    {/* HELPER TEXT - NOT BEING USED
 
     {!isCurrentStepValid && !isLoading && (
       <p className="text-sm text-red-500">
@@ -160,12 +166,12 @@ interface StepperProps {
   isLoading?: boolean[];
 }
 
-const Stepper: React.FC<StepperProps> = ({ 
-  steps, 
-  children, 
-  handleComplete, 
+const Stepper: React.FC<StepperProps> = ({
+  steps,
+  children,
+  handleComplete,
   isStepValid = [],
-  isLoading = []
+  isLoading = [],
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -184,20 +190,23 @@ const Stepper: React.FC<StepperProps> = ({
   const currentStepContent = childrenArray[currentStep] || null;
 
   // Check if the current step is valid
-  const isCurrentStepValid = isStepValid[currentStep] !== undefined ? isStepValid[currentStep] : true;
-  
+  const isCurrentStepValid =
+    isStepValid[currentStep] !== undefined ? isStepValid[currentStep] : true;
+
   // Check if the current step is loading
   const isCurrentStepLoading = isLoading[currentStep] || false;
 
   return (
-    <StepperContext.Provider value={{ 
-      currentStep, 
-      totalSteps: steps.length, 
-      handleComplete,
-      isStepValid,
-      isCurrentStepValid
-    }}>
-      <div className="mx-auto w-full p-6 my-6 motion-preset-blur-right motion-duration-[500ms]">
+    <StepperContext.Provider
+      value={{
+        currentStep,
+        totalSteps: steps.length,
+        handleComplete,
+        isStepValid,
+        isCurrentStepValid,
+      }}
+    >
+      <div className="mx-auto my-6 w-full motion-preset-blur-right p-6 motion-duration-[500ms]">
         <StepIndicator currentStep={currentStep} steps={steps} />
         {/*<ProgressBar currentStep={currentStep} totalSteps={steps.length} />*/}
         {currentStepContent}

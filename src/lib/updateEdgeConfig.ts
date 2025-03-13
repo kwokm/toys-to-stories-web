@@ -1,7 +1,7 @@
-"use server";
+'use server';
 
 export async function updateEdgeConfig(key: string, value: string) {
-try {
+  try {
     const updateEdgeConfig = await fetch(
       `https://api.vercel.com/v1/edge-config/ecfg_0nleybvlnb0xnqnsylefcbfl29mw/items`,
       {
@@ -19,7 +19,7 @@ try {
             },
           ],
         }),
-      },
+      }
     );
     const result = await updateEdgeConfig.json();
     console.log(result);

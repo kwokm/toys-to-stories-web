@@ -17,11 +17,7 @@ import { saveUserDataToLocalStorage } from '@/lib/saveData';
 import { processBMP } from '@/lib/utilityFunctions';
 import router from 'next/router';
 
-
-const steps = [
-  { label: 'Take a Picture' },
-  { label: 'Bring Them to Life' },
-];
+const steps = [{ label: 'Take a Picture' }, { label: 'Bring Them to Life' }];
 
 export default function NewUser() {
   const [userData, setUserData] = useState<UserData>({
@@ -34,10 +30,9 @@ export default function NewUser() {
         vocab: [],
         key: '',
         image: '',
-      }
+      },
     ],
   });
-
 
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -54,7 +49,7 @@ export default function NewUser() {
         personalized story! Along the way, your child will learn four new words in the chosen
         language.
       </p>
-      <div className="flex flex-row gap-8 w-full items-center justify-center">
+      <div className="flex w-full flex-row items-center justify-center gap-8">
         <UploadButton
           endpoint="imageUploader"
           config={{ cn: twMerge }}
@@ -62,25 +57,25 @@ export default function NewUser() {
             button: ({ ready }) => {
               if (!ready)
                 return (
-                  <div className="font-medium text-sm flex flex-row gap-2 items-center">
-                    <CameraIcon className="w-4 h-4" />
+                  <div className="flex flex-row items-center gap-2 text-sm font-medium">
+                    <CameraIcon className="h-4 w-4" />
                     Loading...
                   </div>
                 );
               return capturedImage ? (
-                <div className="font-medium text-sm flex flex-row gap-2 items-center">
-                  <SwitchCameraIcon className="w-4 h-4" />
+                <div className="flex flex-row items-center gap-2 text-sm font-medium">
+                  <SwitchCameraIcon className="h-4 w-4" />
                   Retake Photo
                 </div>
               ) : (
-                <div className="font-medium text-sm flex flex-row gap-2 items-center">
-                  <CameraIcon className="w-4 h-4" />
+                <div className="flex flex-row items-center gap-2 text-sm font-medium">
+                  <CameraIcon className="h-4 w-4" />
                   Take a Photo
                 </div>
               );
             },
           }}
-          className="motion-preset-compress ut-allowed-content:hidden ut-button:ut-readying:bg-gray-600 ut-button:ut-uploading:bg-gray-600 ut-button:bg-black"
+          className="motion-preset-compress ut-button:bg-black ut-allowed-content:hidden ut-button:ut-readying:bg-gray-600 ut-button:ut-uploading:bg-gray-600"
           onClientUploadComplete={res => {
             setIsProcessing(true);
             setCapturedImage(
@@ -89,9 +84,9 @@ export default function NewUser() {
             let newToy: ToyData = {
               key: res[0].key,
               image: res[0].url,
-            }
-            setUserData(prevUserData => ({ 
-              ...prevUserData, 
+            };
+            setUserData(prevUserData => ({
+              ...prevUserData,
               toys: [newToy],
             }));
             console.log(res[0].url);
@@ -122,16 +117,16 @@ export default function NewUser() {
                     vocab: geminiVocabularyData.VocabData,
                     key: res[0].key,
                     image: res[0].url,
-                  }
+                  };
 
                   setUserData(prevUserData => ({
                     ...prevUserData,
                     toys: [newToy],
                   }));
-                  
-                  console.log("HELLO THE DATA IS ", data);
-                  console.log("current userdata is ", userData);
-                  
+
+                  console.log('HELLO THE DATA IS ', data);
+                  console.log('current userdata is ', userData);
+
                   // Set processing to false after updating the state
                   setIsProcessing(false);
                 }
@@ -147,18 +142,18 @@ export default function NewUser() {
           }}
         />
       </div>
-      <div className="mt-3 mb-12 mx-auto">
-        <Card className="rotate-2 flex w-96 flex-col gap-3 items-center rounded-xs">
+      <div className="mx-auto mt-3 mb-12">
+        <Card className="flex w-96 rotate-2 flex-col items-center gap-3 rounded-xs">
           {capturedImage ? (
             <Image
               src={capturedImage}
               alt="Captured toy"
               width={300}
               height={300}
-              className="rounded-md object-cover h-75 w-75"
+              className="h-75 w-75 rounded-md object-cover"
             />
           ) : (
-            <div className="h-75 w-75 bg-gray-100 rounded-md border border-gray-300"></div>
+            <div className="h-75 w-75 rounded-md border border-gray-300 bg-gray-100"></div>
           )}
 
           <div className="h-20" />
@@ -166,20 +161,19 @@ export default function NewUser() {
       </div>
     </div>
   );
-  
 
   async function Cleanup() {
     setCleaning(true);
-    console.log("DATA AT START OF CLEANUP");
+    console.log('DATA AT START OF CLEANUP');
     console.log(userData);
-    
+
     // Make sure we have toys and vocab data before proceeding
     if (!userData.toys || userData.toys.length === 0 || !userData.toys[0].vocab) {
-      console.error("No toy or vocab data available for cleanup");
+      console.error('No toy or vocab data available for cleanup');
       setCleaning(false);
       return Promise.resolve(null);
     }
-    
+
     return fetch('/api/gemini/get-toy-audio', {
       method: 'POST',
       headers: {
@@ -187,24 +181,24 @@ export default function NewUser() {
       },
       body: JSON.stringify({
         vocab: JSON.stringify(userData.toys[0].vocab || []),
-        filePath: "tmp/file_list.txt"
+        filePath: 'tmp/file_list.txt',
       }),
     })
       .then(response => response.json())
       .then(data => {
         if (data.success) {
           const result = JSON.parse(data.toyAudio);
-          console.log("RECEIVED AT CLEANUP ", result);
+          console.log('RECEIVED AT CLEANUP ', result);
           let newToy: ToyData = userData.toys[0];
           newToy = {
             ...newToy,
-            vocab: result
-          }
-          console.log("NEW TOY IS ", newToy);
-          let finalUserData = {...userData, toys: [newToy]};
+            vocab: result,
+          };
+          console.log('NEW TOY IS ', newToy);
+          let finalUserData = { ...userData, toys: [...userData.toys, newToy] };
           saveUserDataToLocalStorage(finalUserData);
-          console.log("USER DATA ON LOCALSTORAGE ");
-          console.log(localStorage.getItem("userData"));
+          console.log('USER DATA ON LOCALSTORAGE ');
+          console.log(localStorage.getItem('userData'));
           fetch('/api/soundboard-prep', {
             method: 'POST',
             headers: {
@@ -212,10 +206,10 @@ export default function NewUser() {
             },
             body: JSON.stringify({
               userData: finalUserData,
-              userDataBlobUrl: userData.userDataBlobUrl
+              userDataBlobUrl: userData.userDataBlobUrl,
             }),
           });
-          console.log("bmp saved");
+          console.log('bmp saved');
           setCleaning(false);
           // redirect('/toys');
           return result;
@@ -224,72 +218,98 @@ export default function NewUser() {
         return null;
       })
       .catch(error => {
-        console.log("ERROR AT COMPLETEREADY ", error);
+        console.log('ERROR AT COMPLETEREADY ', error);
         setCleaning(false);
         throw error; // Re-throw the error so it can be caught by the caller
-      });   
-  };
-
+      });
+  }
 
   // Convert stepContent4 from a function to a React component
   const StepContent4 = () => {
-
     // Animation effect
     useEffect(() => {
       // Set a timeout to change the animation state after a set time.
       const timer = setTimeout(() => {
         setAnimationFirst(false);
-      }, 5500); 
-      
+      }, 5500);
+
       // Clean up the timeout if the component unmounts
       return () => clearTimeout(timer);
     }, []); // Empty dependency array means this runs once when the component mounts
-    
+
     // Define animation classes based on the animationFirst state
-    const typewriter = <div className="leading-none text-2xl font-weight-400 text-gray-600 mt-4 pb-2">I found four vocabulary words for your child to learn.</div>;
-    const titleClass = animationFirst ? "motion-preset-blur-right-sm motion-duration-[1200ms]" : "";
-    const adjustClass = animationFirst ? "motion-delay-[5000ms] motion-preset-blur-up-md motion-duration-[500ms]" : "";
-    const cardClass = animationFirst ? "starting:shadow-base starting:rotate-z-2 starting:rotate-y-0 starting:rotate-x-0 delay-[1000ms] starting:opacity-0 transition-all duration-1500 motion-delay-[1200ms]" : "";
-    const gridClass = animationFirst ? "motion-delay-[1000ms] motion-preset-fade motion-duration-[2000ms]" : "";
-    
+    const typewriter = (
+      <div className="font-weight-400 mt-4 pb-2 text-2xl leading-none text-gray-600">
+        I found four vocabulary words for your child to learn.
+      </div>
+    );
+    const titleClass = animationFirst ? 'motion-preset-blur-right-sm motion-duration-[1200ms]' : '';
+    const adjustClass = animationFirst
+      ? 'motion-delay-[5000ms] motion-preset-blur-up-md motion-duration-[500ms]'
+      : '';
+    const cardClass = animationFirst
+      ? 'starting:shadow-base starting:rotate-z-2 starting:rotate-y-0 starting:rotate-x-0 delay-[1000ms] starting:opacity-0 transition-all duration-1500 motion-delay-[1200ms]'
+      : '';
+    const gridClass = animationFirst
+      ? 'motion-delay-[1000ms] motion-preset-fade motion-duration-[2000ms]'
+      : '';
+
     // Safely access vocab data with fallbacks for undefined values
     const currentToy = userData.toys && userData.toys.length > 0 ? userData.toys[0] : null;
     const vocabData = currentToy?.vocab || [];
-    
+
     return (
-      <div className="flex flex-col gap-4 motion-preset-fade-in motion-duration-[500ms]">
-        <div className={`flex flex-col gap-0 mb-4 ${titleClass}`}>
+      <div className="motion-preset-fade-in flex flex-col gap-4 motion-duration-[500ms]">
+        <div className={`mb-4 flex flex-col gap-0 ${titleClass}`}>
           {/* Title */}
-          <h1 className={`text-[80px] leading-none font-bold text-gray-800 ${titleClass}`}>Hello!</h1>
-          {animationFirst ? <TypewriterEffectSmooth className="mt-4 mb-0 mx-auto" words={[{text: "I found four vocabulary words for your child to learn.", className: "leading-none text-2xl font-weight-400 text-gray-600"}]} /> : typewriter}
-          
-          <div className={`text-lg font-weight-400 text-gray-400 ${adjustClass}`}>Feel free to adjust the words or my name!</div>
+          <h1 className={`text-[80px] leading-none font-bold text-gray-800 ${titleClass}`}>
+            Hello!
+          </h1>
+          {animationFirst ? (
+            <TypewriterEffectSmooth
+              className="mx-auto mt-4 mb-0"
+              words={[
+                {
+                  text: 'I found four vocabulary words for your child to learn.',
+                  className: 'leading-none text-2xl font-weight-400 text-gray-600',
+                },
+              ]}
+            />
+          ) : (
+            typewriter
+          )}
+
+          <div className={`font-weight-400 text-lg text-gray-400 ${adjustClass}`}>
+            Feel free to adjust the words or my name!
+          </div>
         </div>
         {/* Grid */}
-        <div className="my-4 mx-auto grid gap-40 grid-cols-2">
+        <div className="mx-auto my-4 grid grid-cols-2 gap-40">
           {/* Column 1 */}
           {/* Toy Polaroid */}
-          <Card className={`opacity-100 rotate-x-15 rotate-y-0 rotate-z-5 shadow-xl motion-translate-y-loop-10 motion-duration-2000 motion-translate-x-loop-5 motion-ease-in-out rotate-2 flex w-96 flex-col gap-3 items-center rounded-xs ${cardClass}`}>
+          <Card
+            className={`motion-translate-y-loop-10 motion-translate-x-loop-5 flex w-96 rotate-2 rotate-x-15 rotate-y-0 rotate-z-5 flex-col items-center gap-3 rounded-xs opacity-100 shadow-xl motion-ease-in-out motion-duration-2000 ${cardClass}`}
+          >
             {capturedImage ? (
               <Image
                 src={capturedImage}
                 alt="Captured toy"
                 width={300}
                 height={300}
-                className="rounded-md object-cover h-75 w-75"
+                className="h-75 w-75 rounded-md object-cover"
               />
             ) : (
-              <div className="h-75 w-75 bg-gray-100 rounded-md border border-gray-300"></div>
+              <div className="h-75 w-75 rounded-md border border-gray-300 bg-gray-100"></div>
             )}
-            <div className="flex flex-col gap-0 items-center">
+            <div className="flex flex-col items-center gap-0">
               <Input
-                className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 font-lily h-auto font-bold md:text-4xl border-none"
+                className="mx-4 h-auto w-7/10 border-none text-center font-lily font-bold shadow-none placeholder:text-gray-400 md:text-4xl"
                 type="text"
                 placeholder={currentToy?.name || ''}
               />
-              <p className="text-gray-400 mt-[-2]">{currentToy?.name && 'the'}</p>
+              <p className="mt-[-2] text-gray-400">{currentToy?.name && 'the'}</p>
               <Input
-                className="w-7/10 shadow-none text-center placeholder:text-gray-400 mx-4 h-auto font-medium md:text-xl border-none"
+                className="mx-4 h-auto w-7/10 border-none text-center font-medium shadow-none placeholder:text-gray-400 md:text-xl"
                 type="text"
                 placeholder={currentToy?.title || ''}
               />
@@ -298,24 +318,14 @@ export default function NewUser() {
           {/* End Column 1 */}
 
           {/* Column 2 */}
-          <div className={`flex flex-col gap-4 w-full my-auto ${gridClass}`}>
-            <Button variant="outline" className="self-end"><Pencil></Pencil></Button>
-            <Input
-              className="w-full"
-              type="text"
-              placeholder={vocabData[0]?.word || ''} />
-            <Input
-              className="w-full"
-              type="text"
-              placeholder={vocabData[1]?.word || ''} />
-            <Input
-              className="w-full"
-              type="text"
-              placeholder={vocabData[2]?.word || ''} />
-            <Input
-              className="w-full"
-              type="text"
-              placeholder={vocabData[3]?.word || ''} />
+          <div className={`my-auto flex w-full flex-col gap-4 ${gridClass}`}>
+            <Button variant="outline" className="self-end">
+              <Pencil></Pencil>
+            </Button>
+            <Input className="w-full" type="text" placeholder={vocabData[0]?.word || ''} />
+            <Input className="w-full" type="text" placeholder={vocabData[1]?.word || ''} />
+            <Input className="w-full" type="text" placeholder={vocabData[2]?.word || ''} />
+            <Input className="w-full" type="text" placeholder={vocabData[3]?.word || ''} />
           </div>
           {/* End Column 2 */}
         </div>
@@ -324,9 +334,9 @@ export default function NewUser() {
   };
 
   return (
-    <div className="min-h-screen w-screen flex bg-orange-50">
-      <div className="lg:mx-24 mx-4 w-full pt-16 gap-4 flex flex-col">
-        <div className="mx-auto h-20 rounded-md overflow-hidden">
+    <div className="flex min-h-screen w-screen bg-orange-50">
+      <div className="mx-4 flex w-full flex-col gap-4 pt-16 lg:mx-24">
+        <div className="mx-auto h-20 overflow-hidden rounded-md">
           <Image
             className="h-full w-auto"
             src="/ToysToStoriesNoBG.svg"
@@ -358,7 +368,9 @@ export default function NewUser() {
           ]}
         >
           <StepContent>{stepContent3}</StepContent>
-          <StepContent><StepContent4 /></StepContent>
+          <StepContent>
+            <StepContent4 />
+          </StepContent>
         </Stepper>
       </div>
     </div>

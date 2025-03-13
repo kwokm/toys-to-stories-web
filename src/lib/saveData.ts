@@ -16,7 +16,7 @@ export async function saveToyDataToLocalStorage(
     console.error('Error saving ToyData to localStorage:', error);
     throw error;
   }
-};
+}
 
 /**
  * Save UserData to localStorage (for client-side usage)
@@ -34,4 +34,4 @@ export async function saveUserDataToLocalStorage(
     console.error('Error saving UserData to localStorage:', error);
     throw error;
   }
-};
+}

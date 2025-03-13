@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
         hostname: process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID + '.ufs.sh',
         pathname: '/f/*',
       },
+      {
+        protocol: 'https',
+        hostname: 'utfs.io',
+        pathname: '/f/*',
+      },
     ],
   },
 };

@@ -65,7 +65,13 @@ const languages = [
   },
 ];
 
-function OtherLanguageSelector({ onSelect, className }: { onSelect: (language: string) => void, className?: string }) {
+function OtherLanguageSelector({
+  onSelect,
+  className,
+}: {
+  onSelect: (language: string) => void;
+  className?: string;
+}) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
 
@@ -73,7 +79,7 @@ function OtherLanguageSelector({ onSelect, className }: { onSelect: (language: s
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          className={cn("w-[200px] justify-between", className)}
+          className={cn('w-[200px] justify-between', className)}
           variant="outline"
           role="combobox"
           aria-expanded={open}
@@ -86,7 +92,7 @@ function OtherLanguageSelector({ onSelect, className }: { onSelect: (language: s
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0">
         <Command>
-          <CommandInput placeholder="Search language..." className={cn("h-9")} />
+          <CommandInput placeholder="Search language..." className={cn('h-9')} />
           <CommandList>
             <CommandEmpty>No language found.</CommandEmpty>
             <CommandGroup>
@@ -193,16 +199,15 @@ function ReadingLevelCard({
       onClick={onSelect}
     >
       <div className="flex flex-row gap-6">
-        <div className="flex flex-col gap-2 w-[92px]">
-        <Image src={stepImage} className="mx-auto w-16 h-16" alt={title} width={64} height={64} />
-        <p className="text-sm leading-none text-slate-600">{ageRange}</p>
+        <div className="flex w-[92px] flex-col gap-2">
+          <Image src={stepImage} className="mx-auto h-16 w-16" alt={title} width={64} height={64} />
+          <p className="text-sm leading-none text-slate-600">{ageRange}</p>
         </div>
-        <div className="flex flex-col gap-2 my-auto">
-        <p className="text-left text-2xl font-semibold text-slate-800">{title}</p>
-        <p className="text-left text-base text-slate-700">{description}</p>
+        <div className="my-auto flex flex-col gap-2">
+          <p className="text-left text-2xl font-semibold text-slate-800">{title}</p>
+          <p className="text-left text-base text-slate-700">{description}</p>
         </div>
-        <div className="flex flex-row gap-1">
-        </div>
+        <div className="flex flex-row gap-1"></div>
       </div>
     </Card>
   );

@@ -6,6 +6,7 @@ import ReactCountryFlag from 'react-country-flag';
 import { cn } from '../lib/utils';
 import { Check, ChevronsUpDown, Baby } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import {
   Command,
   CommandEmpty,
@@ -136,7 +137,7 @@ function LanguageCard({
     <Card
       className={cn(
         'flex cursor-pointer flex-row items-center justify-center gap-4 p-4 transition-all duration-200',
-        selected ? 'border-primary bg-primary/10 shadow-md' : 'hover:bg-secondary/10'
+        selected ? 'border-orange-500 bg-orange-100 shadow-md' : 'hover:bg-orange-50'
       )}
       onClick={onSelect}
     >
@@ -173,9 +174,11 @@ function ReadingLevelCard({
   description,
   ageRange,
   selected = false,
+  stepImage,
   onSelect,
 }: {
   title: string;
+  stepImage: string;
   description: string;
   ageRange: string;
   selected?: boolean;
@@ -185,18 +188,22 @@ function ReadingLevelCard({
     <Card
       className={cn(
         'flex w-full cursor-pointer flex-col gap-4 p-4 transition-all duration-200',
-        selected ? 'border-primary bg-primary/10 shadow-md' : 'hover:bg-secondary/10'
+        selected ? 'border-orange-500 bg-orange-100 shadow-md' : 'hover:bg-orange-50'
       )}
       onClick={onSelect}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-row gap-6">
+        <div className="flex flex-col gap-2 w-[92px]">
+        <Image src={stepImage} className="mx-auto w-16 h-16" alt={title} width={64} height={64} />
+        <p className="text-sm leading-none text-slate-600">{ageRange}</p>
+        </div>
+        <div className="flex flex-col gap-2 my-auto">
         <p className="text-left text-2xl font-semibold text-slate-800">{title}</p>
+        <p className="text-left text-base text-slate-700">{description}</p>
+        </div>
         <div className="flex flex-row gap-1">
-          <Baby className="h-3.5 w-3.5" />
-          <p className="text-sm leading-none text-slate-600">{ageRange}</p>
         </div>
       </div>
-      <p className="text-left text-base text-slate-700">{description}</p>
     </Card>
   );
 }

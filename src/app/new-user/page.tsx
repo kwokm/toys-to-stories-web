@@ -116,12 +116,14 @@ export default function NewUser() {
           description={
             'Looks at pictures, listens to voices, and occasionally likes to chew on books.'
           }
+          stepImage="/assets/lvl1.svg"
           ageRange="0-12 Months"
           selected={userData.readingLevel === 1}
           onSelect={() => setUserData({ ...userData, readingLevel: 1 })}
         />
         <ReadingLevelCard
           title="Recognizing Words"
+          stepImage="/assets/lvl2.svg"
           description="Points at pictures, repeats words nonstop, and loves rhymes even more than you do."
           ageRange="12-24 Months"
           selected={userData.readingLevel === 2}
@@ -129,6 +131,7 @@ export default function NewUser() {
         />
         <ReadingLevelCard
           title="Listening to Stories"
+          stepImage="/assets/lvl3.svg"
           description='Follows simple stories, starts recognizing letters, but may still think "S" is just a cool squiggle.'
           ageRange="2-3 Years"
           selected={userData.readingLevel === 3}
@@ -136,6 +139,7 @@ export default function NewUser() {
         />
         <ReadingLevelCard
           title="Learning Letters & Sounds"
+          stepImage="/assets/lvl4.svg"
           description="Knows their ABCs, understands basic story sequences, predicts what happens next."
           ageRange="3-4 Years"
           selected={userData.readingLevel === 4}
@@ -143,6 +147,7 @@ export default function NewUser() {
         />
         <ReadingLevelCard
           title="Starting to Read"
+          stepImage="/assets/lvl5.svg"
           description='Recognizes words, enjoys a good plot twist, and uses "reading" as an excuse to stay up past bedtime.'
           ageRange="4-5 Years"
           selected={userData.readingLevel === 5}
@@ -318,9 +323,11 @@ export default function NewUser() {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(finalUserData),
+            body: JSON.stringify({
+              userData: finalUserData,
+              userDataBlobUrl: userData.userDataBlobUrl
+            }),
           });
-          processBMP(newToy);
           console.log("bmp saved");
           setCleaning(false);
           // redirect('/toys');
@@ -430,7 +437,7 @@ export default function NewUser() {
   };
 
   return (
-    <div className="h-screen w-screen flex animate-in fade-in zoom-in ">
+    <div className="min-h-screen w-screen flex bg-orange-50">
       <div className="lg:mx-24 mx-4 w-full pt-16 gap-4 flex flex-col">
         <div className="mx-auto h-20 rounded-md overflow-hidden">
           <Image

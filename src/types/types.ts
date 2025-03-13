@@ -5,6 +5,7 @@ export interface ToyData {
     vocab?: VocabData[];
     key: string;
     image: string;
+    bmpUrl?: string;
     personalityTraits?: string[];
   }
 
@@ -12,6 +13,7 @@ export interface ToyData {
     language: string | null;
     readingLevel: number | null;
     toys: ToyData[];
+    userDataBlobUrl?: string;
   }
 
   export interface VocabData {

@@ -7,6 +7,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+    --color-orange-50: #FFF7EA;
+    --color-orange-100: #FFE7CC;
+    --color-orange-200: #FFCF99;
+    --color-orange-300: #FFB866;
+    --color-orange-400: #FFA033;
+    --color-orange-500: #F88400;
+    --color-orange-600: #CC6D00;
+    --color-orange-700: #995200;
+    --color-orange-800: #663600;
+    --color-orange-900: #331B00;
+    --color-orange-950: #1A0E00;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

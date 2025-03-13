@@ -9,17 +9,26 @@ import { useEffect, useState } from 'react';
 
 function EmptyHome() {
   return (
-    <div className="align-center flex h-screen w-screen">
-      <div className="align-center mx-24 my-auto flex flex-col items-center justify-center gap-8">
+    <div className="align-center flex h-screen w-screen bg-orange-50">
+      <div className="align-center mx-auto my-auto flex flex-col items-center justify-center gap-26">
+        <div className="mx-auto gap-14 flex flex-col items-center justify-center">
         <Image
-          className="mx-auto rounded-lg"
-          src="/ToysToStoriesBanner.svg"
+          className="mx-auto rounded-md"
+          src="/assets/ToysToStoriesColoredText.svg"
           alt="banner"
-          width={1843}
-          height={426}
+          width={554}
+          height={128}
         />
+        <Image 
+          className="mx-auto rounded-md"
+          src="/assets/HomeImage.webp"
+          alt="Welcome to Toys to Stories!"
+          width={554}
+          height={554}
+        />
+        </div>
         <Link href="/new-user">
-          <Button size="lg" className="text-lg">
+          <Button size="lg" className="w-64 py-6 text-lg">
             <Shapes className="h-3.5 w-3.5" />
             Get Started
           </Button>
@@ -30,6 +39,7 @@ function EmptyHome() {
 }
 
 export default function Home() {
+  /*
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   
@@ -58,5 +68,6 @@ export default function Home() {
   }, [router]);
 
   // Show loading state or empty home
-  return isLoading ? <div>Loading...</div> : <EmptyHome />;
+  return isLoading ? <div>Loading...</div> : <EmptyHome />; */
+  return <EmptyHome />;
 }

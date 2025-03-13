@@ -14,12 +14,11 @@ export const buildToyCards = (
   return (
     <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3">
       {toys.map((toy, index) => (
-        <ToyCard 
-          key={toy.key} 
-          toy={toy} 
+        <ToyCard
+          key={toy.key}
+          toy={toy}
           isSelected={selectedToys.includes(toy.key)}
           onSelect={onToySelect}
-
         />
       ))}
       <EmptyToyCard variant="plus" />
@@ -27,13 +26,13 @@ export const buildToyCards = (
   );
 };
 
-export const ToyCard = ({ 
-  toy, 
-  isSelected = false, 
+export const ToyCard = ({
+  toy,
+  isSelected = false,
   onSelect,
-  className
-}: { 
-  toy: ToyData; 
+  className,
+}: {
+  toy: ToyData;
   isSelected?: boolean;
   onSelect?: (toyKey: string) => void;
   className?: string;
@@ -44,14 +43,19 @@ export const ToyCard = ({
     }
   };
 
-  const hoverClasses = 'hover:rotate-x-4 hover:rotate-z-2 motion-translate-y-loop-10 motion-duration-2000 motion-translate-x-loop-5 motion-ease-in-out rotate-2';
-  const selectedClasses = 'ring-4 ring-orange-500 shadow-lg rotate-x-8 rotate-y-10 rotate-z-3 duration-300';
+  const hoverClasses =
+    'hover:rotate-x-4 hover:rotate-z-2 motion-translate-y-loop-10 motion-duration-2000 motion-translate-x-loop-5 motion-ease-in-out rotate-2';
+  const selectedClasses =
+    'ring-4 ring-orange-500 shadow-lg rotate-x-8 rotate-y-10 rotate-z-3 duration-300';
 
   return (
-    <Card 
-      className={cn(`flex rotate-2 flex-col items-center gap-3 rounded-xs p-8 cursor-pointer transition-all duration-500 ${
-        isSelected ? selectedClasses : hoverClasses
-      }`, className)}
+    <Card
+      className={cn(
+        `flex rotate-2 cursor-pointer flex-col items-center gap-3 rounded-xs p-8 transition-all duration-500 ${
+          isSelected ? selectedClasses : hoverClasses
+        }`,
+        className
+      )}
       onClick={handleClick}
     >
       {toy.image ? (
@@ -66,11 +70,11 @@ export const ToyCard = ({
         <div className="h-20 w-20 rounded-md border border-gray-300 bg-gray-100"></div>
       )}
       <div className="flex flex-col items-center gap-0">
-        <div className="mx-4 h-auto border-none text-center font-lily font-bold shadow-none text-zinc-900 placeholder:text-gray-400 md:text-4xl">
+        <div className="mx-4 h-auto border-none text-center font-lily font-bold text-zinc-900 shadow-none placeholder:text-gray-400 md:text-4xl">
           {toy.name}
         </div>
         <p className="mt-[-2] text-gray-400">{toy.name && 'the'}</p>
-        <div className="h-auto border-none text-center font-medium shadow-none text-zinc-500 placeholder:text-gray-400 md:text-xl">
+        <div className="h-auto border-none text-center font-medium text-zinc-500 shadow-none placeholder:text-gray-400 md:text-xl">
           {toy.title}
         </div>
       </div>

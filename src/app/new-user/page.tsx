@@ -43,9 +43,9 @@ export default function NewUser() {
   const [cleaning, setCleaning] = useState<boolean>(false);
 
   return (
-    <div className="min-h-screen w-screen flex bg-orange-50">
-      <div className="lg:mx-24 mx-4 w-full pt-16 gap-4 flex flex-col">
-        <div className="mx-auto h-20 rounded-md overflow-hidden">
+    <div className="flex min-h-screen w-screen bg-orange-50">
+      <div className="mx-4 flex w-full flex-col gap-4 pt-16 lg:mx-24">
+        <div className="mx-auto h-20 overflow-hidden rounded-md">
           <Image
             className="h-full w-auto"
             src="/ToysToStoriesNoBG.svg"

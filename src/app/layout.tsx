@@ -8,6 +8,7 @@ import {
   Figtree,
 } from 'next/font/google';
 import './globals.css';
+import { Toaster } from '@/components/ui/sonner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -61,6 +62,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${lilyScriptOne.variable} ${flowCircular.variable} ${bricolageGrotesque.variable} ${figtree.variable} flex flex-col antialiased`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );

@@ -14,6 +14,8 @@ export default function NewStoryPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [animatedToys, setAnimatedToys] = useState<string[]>([]);
   const [isGeneratingStory, setIsGeneratingStory] = useState(false);
+  const [isSavingToCloud, setIsSavingToCloud] = useState(false);
+  const [cloudSaveSuccess, setCloudSaveSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,6 +40,17 @@ export default function NewStoryPage() {
       }
     };
 
+    // Ensure user has a unique ID
+    const ensureUserId = () => {
+      let userId = localStorage.getItem('userId');
+      if (!userId) {
+        // Generate a unique ID if one doesn't exist
+        userId = `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        localStorage.setItem('userId', userId);
+      }
+      return userId;
+    };
+
     // Get selected toys from localStorage or URL params
     const getSelectedToysFromStorage = () => {
       if (typeof window === 'undefined') {
@@ -59,17 +72,18 @@ export default function NewStoryPage() {
 
     const userDataFromStorage = getUserDataFromLocalStorage();
     const selectedToyKeys = getSelectedToysFromStorage();
-    
+
+    // Ensure user has a unique ID
+    ensureUserId();
+
     setUserData(userDataFromStorage);
-    
+
     // Filter toys based on selected keys
     if (userDataFromStorage && userDataFromStorage.toys) {
-      const toys = userDataFromStorage.toys.filter(toy => 
-        selectedToyKeys.includes(toy.key)
-      );
+      const toys = userDataFromStorage.toys.filter(toy => selectedToyKeys.includes(toy.key));
       setSelectedToys(toys);
     }
-    
+
     setIsLoading(false);
   }, []);
 
@@ -89,17 +103,17 @@ export default function NewStoryPage() {
   useEffect(() => {
     const generateStory = async () => {
       if (selectedToys.length === 0 || isGeneratingStory) return;
-      
+
       setIsGeneratingStory(true);
-      
+
       try {
         // Create prompt with toy names and titles
-        const toyDescriptions = selectedToys.map(toy => 
-          `${toy.name || 'Unnamed'} the ${toy.title || 'Character'}`
-        ).join(', ');
-        
+        const toyDescriptions = selectedToys
+          .map(toy => `${toy.name || 'Unnamed'} the ${toy.title || 'Character'}`)
+          .join(', ');
+
         const prompt = `Create a story featuring these characters: ${toyDescriptions}`;
-        
+
         // Call the API route instead of the server function directly
         const response = await fetch('/api/gemini/create-story', {
           method: 'POST',
@@ -108,16 +122,16 @@ export default function NewStoryPage() {
           },
           body: JSON.stringify({ prompt }),
         });
-        
+
         if (!response.ok) {
           throw new Error(`API request failed with status ${response.status}`);
         }
-        
+
         const data = await response.json();
-        
+
         // Parse the JSON result
         const storyData = JSON.parse(data.result);
-        
+
         // Add timestamp and ID to the story
         const storyWithMetadata = {
           ...storyData,
@@ -127,25 +141,75 @@ export default function NewStoryPage() {
             key: toy.key,
             name: toy.name,
             title: toy.title,
-            image: toy.image
-          }))
+            image: toy.image,
+          })),
         };
-        
+
         // Get existing stories from localStorage or initialize empty array
         const existingStoriesString = localStorage.getItem('stories');
-        const existingStories = existingStoriesString 
-          ? JSON.parse(existingStoriesString) 
-          : [];
-        
+        const existingStories = existingStoriesString ? JSON.parse(existingStoriesString) : [];
+
         // Add new story to the array
         const updatedStories = [storyWithMetadata, ...existingStories];
-        
+
         // Save updated stories array to localStorage
         localStorage.setItem('stories', JSON.stringify(updatedStories));
-        
+
         // Set the current story ID in localStorage
         localStorage.setItem('currentStoryId', storyWithMetadata.id);
-        
+
+        // Save stories to Vercel Blob
+        try {
+          setIsSavingToCloud(true);
+
+          // Get or create user ID
+          const userId =
+            localStorage.getItem('userId') ||
+            `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+          // Create a promise that rejects after a timeout
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Cloud save operation timed out')), 5000);
+          });
+
+          // Race the fetch operation against the timeout
+          const blobResponse = (await Promise.race([
+            fetch('/api/stories/save', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                stories: updatedStories,
+                userId: userId,
+              }),
+            }),
+            timeoutPromise,
+          ])) as Response;
+
+          if (blobResponse.ok) {
+            const blobData = await blobResponse.json();
+            console.log('Stories saved to cloud storage:', blobData.url);
+
+            // Optionally store the cloud URL in localStorage
+            localStorage.setItem('storiesCloudUrl', blobData.url);
+            setCloudSaveSuccess(true);
+
+            // Clear success message after 3 seconds
+            setTimeout(() => {
+              setCloudSaveSuccess(false);
+            }, 3000);
+          } else {
+            // If blob storage fails, we still have the stories in localStorage
+            console.error('Failed to save stories to cloud storage');
+          }
+          setIsSavingToCloud(false);
+        } catch (error) {
+          // If there's an error saving to cloud, log it but continue
+          console.error('Error saving stories to cloud storage:', error);
+          setIsSavingToCloud(false);
+        }
+
         // Navigate to the story-mode page
         router.push('/stories/story-mode');
       } catch (error) {
@@ -154,7 +218,7 @@ export default function NewStoryPage() {
         setIsGeneratingStory(false);
       }
     };
-    
+
     generateStory();
   }, [selectedToys, router, isGeneratingStory]);
 
@@ -173,9 +237,9 @@ export default function NewStoryPage() {
       <div className="container mx-auto flex min-h-[50vh] items-center justify-center py-8">
         <div className="text-center">
           <p className="text-xl text-red-500">{error}</p>
-          <button 
+          <button
             onClick={() => router.push('/toys')}
-            className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-md"
+            className="mt-4 rounded-md bg-orange-500 px-4 py-2 text-white"
           >
             Go Back
           </button>
@@ -185,19 +249,33 @@ export default function NewStoryPage() {
   }
 
   return (
-    <div className="min-h-screen h-full pb-24 bg-orange-50">
+    <div className="h-full min-h-screen bg-orange-50 pb-24">
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bricolage font-semibold text-zinc-500 text-center mb-8 motion-focus motion-duration-[500ms] animate-pulse">
+        <h1 className="motion-focus mb-8 animate-pulse text-center font-bricolage text-3xl font-semibold text-zinc-500 motion-duration-[500ms]">
           Creating your story...
         </h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {selectedToys.map((toy) => (
-            <ToyCard 
-              key={toy.key} 
-              toy={toy}
-              isAnimated={animatedToys.includes(toy.key)}
-            />
+
+        {isSavingToCloud && (
+          <div className="mb-4 flex justify-center">
+            <p className="motion-focus inline-flex animate-pulse items-center gap-2 rounded-full bg-orange-100 px-3 py-1 text-sm text-zinc-500 motion-duration-[300ms]">
+              <span className="size-2 rounded-full bg-orange-400"></span>
+              Saving to cloud...
+            </p>
+          </div>
+        )}
+
+        {cloudSaveSuccess && (
+          <div className="mb-4 flex justify-center">
+            <p className="motion-focus inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1 text-sm text-green-600 motion-duration-[300ms]">
+              <span className="size-2 rounded-full bg-green-500"></span>
+              Story saved to cloud!
+            </p>
+          </div>
+        )}
+
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
+          {selectedToys.map(toy => (
+            <ToyCard key={toy.key} toy={toy} isAnimated={animatedToys.includes(toy.key)} />
           ))}
         </div>
       </div>
@@ -205,18 +283,12 @@ export default function NewStoryPage() {
   );
 }
 
-const ToyCard = ({ 
-  toy,
-  isAnimated = false
-}: { 
-  toy: ToyData;
-  isAnimated: boolean;
-}) => {
+const ToyCard = ({ toy, isAnimated = false }: { toy: ToyData; isAnimated: boolean }) => {
   return (
-    <Card 
+    <Card
       className={cn(
-        "flex flex-col items-center gap-3 rounded-xs p-8 transition-all duration-500 rotate-2",
-        isAnimated ? "motion-focus motion-duration-[500ms]" : "opacity-0"
+        'flex rotate-2 flex-col items-center gap-3 rounded-xs p-8 transition-all duration-500',
+        isAnimated ? 'motion-focus motion-duration-[500ms]' : 'opacity-0'
       )}
     >
       {toy.image ? (
@@ -231,11 +303,11 @@ const ToyCard = ({
         <div className="h-40 w-40 rounded-md border border-gray-300 bg-gray-100"></div>
       )}
       <div className="flex flex-col items-center gap-0">
-        <div className="mx-4 h-auto border-none text-center font-bold shadow-none text-zinc-900 placeholder:text-gray-400 md:text-2xl">
+        <div className="mx-4 h-auto border-none text-center font-bold text-zinc-900 shadow-none placeholder:text-gray-400 md:text-2xl">
           {toy.name}
         </div>
         <p className="mt-[-2] text-gray-400">{toy.name && 'the'}</p>
-        <div className="h-auto border-none text-center font-medium shadow-none text-zinc-500 placeholder:text-gray-400 md:text-xl">
+        <div className="h-auto border-none text-center font-medium text-zinc-500 shadow-none placeholder:text-gray-400 md:text-xl">
           {toy.title}
         </div>
       </div>

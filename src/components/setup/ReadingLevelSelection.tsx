@@ -8,10 +8,13 @@ interface ReadingLevelSelectionProps {
   setUserData: React.Dispatch<React.SetStateAction<UserData>>;
 }
 
-export const ReadingLevelSelection: React.FC<ReadingLevelSelectionProps> = ({ userData, setUserData }) => {
+export const ReadingLevelSelection: React.FC<ReadingLevelSelectionProps> = ({
+  userData,
+  setUserData,
+}) => {
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="pb-2 text-[28px] font-[700] text-center text-gray-800">
+      <h2 className="pb-2 text-center text-[28px] font-[700] text-gray-800">
         What stage best describes the child's current reading level?
       </h2>
       <div className="flex flex-col gap-4">

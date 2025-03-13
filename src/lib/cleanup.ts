@@ -24,24 +24,24 @@ export function getExistingUserData(): UserData | null {
 }
 
 export async function cleanupUserData(
-  userData: UserData, 
+  userData: UserData,
   setCleaning: React.Dispatch<React.SetStateAction<boolean>>,
   isNewToy: boolean = false
 ): Promise<any> {
   setCleaning(true);
-  console.log("DATA AT START OF CLEANUP");
+  console.log('DATA AT START OF CLEANUP');
   console.log(userData);
-  
+
   // Make sure we have toys and vocab data before proceeding
   if (!userData.toys || userData.toys.length === 0 || !userData.toys[0].vocab) {
-    console.error("No toy or vocab data available for cleanup");
+    console.error('No toy or vocab data available for cleanup');
     setCleaning(false);
     return Promise.resolve(null);
   }
-  
+
   // Get the new toy (always the first one in the array for this page)
   const newToy = userData.toys[0];
-  
+
   return fetch('/api/gemini/get-toy-audio', {
     method: 'POST',
     headers: {
@@ -49,48 +49,48 @@ export async function cleanupUserData(
     },
     body: JSON.stringify({
       vocab: JSON.stringify(newToy.vocab || []),
-      filePath: "tmp/file_list.txt"
+      filePath: 'tmp/file_list.txt',
     }),
   })
     .then(response => response.json())
     .then(data => {
       if (data.success) {
         const result = JSON.parse(data.toyAudio);
-        console.log("RECEIVED AT CLEANUP ", result);
-        
+        console.log('RECEIVED AT CLEANUP ', result);
+
         // Update the new toy with the processed vocab
         const processedToy: ToyData = {
           ...newToy,
-          vocab: result
+          vocab: result,
         };
-        console.log("PROCESSED TOY IS ", processedToy);
-        
+        console.log('PROCESSED TOY IS ', processedToy);
+
         let finalUserData: UserData;
-        
+
         if (isNewToy) {
           // If this is a new toy to add to existing user data
           const existingUserData = getExistingUserData();
-          
+
           if (existingUserData) {
             // Add the new toy to the existing toys array
             finalUserData = {
               ...existingUserData,
-              toys: [...existingUserData.toys, processedToy]
+              toys: [...existingUserData.toys, processedToy],
             };
           } else {
             // If no existing user data, create new with just this toy
-            finalUserData = {...userData, toys: [processedToy]};
+            finalUserData = { ...userData, toys: [processedToy] };
           }
         } else {
           // Original behavior for new user setup
-          finalUserData = {...userData, toys: [processedToy]};
+          finalUserData = { ...userData, toys: [processedToy] };
         }
-        
+
         // Save the updated user data to localStorage
         saveUserDataToLocalStorage(finalUserData);
-        console.log("USER DATA ON LOCALSTORAGE ");
-        console.log(localStorage.getItem("userData"));
-        
+        console.log('USER DATA ON LOCALSTORAGE ');
+        console.log(localStorage.getItem('userData'));
+
         // Prepare the soundboard with the updated user data
         fetch('/api/soundboard-prep', {
           method: 'POST',
@@ -98,10 +98,10 @@ export async function cleanupUserData(
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            userData: finalUserData
+            userData: finalUserData,
           }),
         });
-        console.log("bmp saved");
+        console.log('bmp saved');
         setCleaning(false);
         return result;
       }
@@ -109,8 +109,8 @@ export async function cleanupUserData(
       return null;
     })
     .catch(error => {
-      console.log("ERROR AT COMPLETEREADY ", error);
+      console.log('ERROR AT COMPLETEREADY ', error);
       setCleaning(false);
       throw error; // Re-throw the error so it can be caught by the caller
-    });   
+    });
 }

@@ -11,10 +11,10 @@ interface LanguageSelectionProps {
 export const LanguageSelection: React.FC<LanguageSelectionProps> = ({ userData, setUserData }) => {
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="pb-2 text-[28px] font-[700] text-center text-gray-800">
+      <h2 className="pb-2 text-center text-[28px] font-[700] text-gray-800">
         What language would you like your child to learn?
       </h2>
-      <div className="justify-center flex flex-row flex-wrap gap-4">
+      <div className="flex flex-row flex-wrap justify-center gap-4">
         <LanguageCard
           language="Spanish"
           countryCodes={['ES', 'MX']}
@@ -59,7 +59,7 @@ export const LanguageSelection: React.FC<LanguageSelectionProps> = ({ userData, 
         />
       </div>
       <OtherLanguageSelector
-        className="mx-auto w-[300px] h-[48px]"
+        className="mx-auto h-[48px] w-[300px]"
         onSelect={language => {
           console.log(language);
           setUserData({ ...userData, language: language });

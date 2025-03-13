@@ -6,8 +6,43 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { DemoDataModal } from '@/components/DemoDataModal';
 
 function EmptyHome() {
+  const router = useRouter();
+  const [clickCount, setClickCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
+
+  // Function to handle triple click on the home image
+  const handleImageClick = async () => {
+    // Increment click count
+    setClickCount(prevCount => {
+      const newCount = prevCount + 1;
+
+      // If triple click detected
+      if (newCount === 3) {
+        // Open the demo data modal instead of loading data directly
+        setIsDemoModalOpen(true);
+        return 0; // Reset click count
+      }
+
+      // Reset click count after a delay if not a triple click
+      setTimeout(() => {
+        setClickCount(0);
+      }, 500);
+
+      return newCount;
+    });
+  };
+
+  // Function to handle when demo data is loaded
+  const handleDemoDataLoaded = () => {
+    // Navigate to the toys page
+    router.push('/toys');
+  };
+
   return (
     <div className="align-center flex h-screen w-screen bg-orange-50">
       <div className="align-center mx-auto my-auto flex flex-col items-center justify-center gap-26">
@@ -28,12 +63,17 @@ function EmptyHome() {
             </p>
           </div>
           <Image
-            className="mx-auto rounded-md"
+            className={`mx-auto rounded-md ${isLoading ? 'opacity-70' : ''} ${clickCount > 0 ? 'cursor-pointer' : ''} transition-all duration-300 hover:shadow-lg`}
             src="/assets/HomeImage.webp"
             alt="Welcome to Toys to Stories!"
             width={554}
             height={554}
+            onClick={handleImageClick}
+            title="Triple-click to load demo data"
           />
+          <p className="mt-2 text-xs text-gray-500 italic">
+            Triple-click the image to load demo data
+          </p>
         </div>
         <Link href="/new-user">
           <Button size="lg" className="w-64 py-6 text-lg">
@@ -42,6 +82,13 @@ function EmptyHome() {
           </Button>
         </Link>
       </div>
+
+      {/* Demo Data Modal */}
+      <DemoDataModal
+        isOpen={isDemoModalOpen}
+        onClose={() => setIsDemoModalOpen(false)}
+        onDataLoaded={handleDemoDataLoaded}
+      />
     </div>
   );
 }

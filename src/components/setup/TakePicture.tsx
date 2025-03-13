@@ -26,7 +26,7 @@ export const TakePicture: React.FC<TakePictureProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-4 pb-8">
-      <h2 className="pb-0 text-3xl font-[700] text-center text-gray-800">
+      <h2 className="pb-0 text-center text-3xl font-[700] text-gray-800">
         Let's bring your child's favorite toy to life!
       </h2>
       <p className="pb-4 text-left text-base text-gray-600">
@@ -34,7 +34,7 @@ export const TakePicture: React.FC<TakePictureProps> = ({
         personalized story! Along the way, your child will learn four new words in the chosen
         language.
       </p>
-      <div className="flex flex-row gap-8 w-full items-center justify-center">
+      <div className="flex w-full flex-row items-center justify-center gap-8">
         <UploadButton
           endpoint="imageUploader"
           config={{ cn: twMerge }}
@@ -42,25 +42,25 @@ export const TakePicture: React.FC<TakePictureProps> = ({
             button: ({ ready }) => {
               if (!ready)
                 return (
-                  <div className="font-medium text-sm flex flex-row gap-2 items-center">
-                    <CameraIcon className="w-4 h-4" />
+                  <div className="flex flex-row items-center gap-2 text-sm font-medium">
+                    <CameraIcon className="h-4 w-4" />
                     Loading...
                   </div>
                 );
               return capturedImage ? (
-                <div className="font-medium text-sm flex flex-row gap-2 items-center">
-                  <SwitchCameraIcon className="w-4 h-4" />
+                <div className="flex flex-row items-center gap-2 text-sm font-medium">
+                  <SwitchCameraIcon className="h-4 w-4" />
                   Retake Photo
                 </div>
               ) : (
-                <div className="font-medium text-sm flex flex-row gap-2 items-center">
-                  <CameraIcon className="w-4 h-4" />
+                <div className="flex flex-row items-center gap-2 text-sm font-medium">
+                  <CameraIcon className="h-4 w-4" />
                   Take a Photo
                 </div>
               );
             },
           }}
-          className="motion-preset-compress ut-allowed-content:hidden ut-button:ut-readying:bg-gray-600 ut-button:ut-uploading:bg-gray-600 ut-button:bg-black"
+          className="motion-preset-compress ut-button:bg-black ut-allowed-content:hidden ut-button:ut-readying:bg-gray-600 ut-button:ut-uploading:bg-gray-600"
           onClientUploadComplete={res => {
             setIsProcessing(true);
             setCapturedImage(
@@ -106,8 +106,8 @@ export const TakePicture: React.FC<TakePictureProps> = ({
                     toys: [newToy],
                   }));
 
-                  console.log("HELLO THE DATA IS ", data);
-                  console.log("current userdata is ", userData);
+                  console.log('HELLO THE DATA IS ', data);
+                  console.log('current userdata is ', userData);
 
                   // Set processing to false after updating the state
                   setIsProcessing(false);
@@ -124,18 +124,18 @@ export const TakePicture: React.FC<TakePictureProps> = ({
           }}
         />
       </div>
-      <div className="mt-3 mb-12 mx-auto">
-        <Card className="rotate-2 flex w-96 flex-col gap-3 items-center rounded-xs">
+      <div className="mx-auto mt-3 mb-12">
+        <Card className="flex w-96 rotate-2 flex-col items-center gap-3 rounded-xs">
           {capturedImage ? (
             <Image
               src={capturedImage}
               alt="Captured toy"
               width={300}
               height={300}
-              className="rounded-md object-cover h-75 w-75"
+              className="h-75 w-75 rounded-md object-cover"
             />
           ) : (
-            <div className="h-75 w-75 bg-gray-100 rounded-md border border-gray-300"></div>
+            <div className="h-75 w-75 rounded-md border border-gray-300 bg-gray-100"></div>
           )}
 
           <div className="h-20" />

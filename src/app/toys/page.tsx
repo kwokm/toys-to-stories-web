@@ -8,7 +8,8 @@ import { useState, useEffect } from 'react';
 import { buildToyCards } from '@/components/toys/toy-cards';
 import Image from 'next/image';
 import { Switch } from '@/components/ui/switch';
-import { ScrollText, Library, Settings } from 'lucide-react';
+import { ScrollText, Library, Settings, Icon } from 'lucide-react';
+import { chest } from '@lucide/lab';
 import { PageHeader } from '@/components/layout/PageHeader';
 
 export default function ToysPage() {
@@ -34,14 +35,14 @@ export default function ToysPage() {
   const handleCreateStory = () => {
     // Save selected toys to localStorage
     localStorage.setItem('selectedToys', JSON.stringify(selectedToys));
-    
+
     // Navigate to the stories/new page
     router.push('/stories/new');
   };
 
   // Function to handle settings navigation
   const handleSettings = () => {
-    router.push('/new-user');
+    router.push('/settings');
   };
 
   useEffect(() => {
@@ -80,7 +81,7 @@ export default function ToysPage() {
         if (!storiesString) {
           return false;
         }
-        
+
         const stories = JSON.parse(storiesString);
         return Array.isArray(stories) && stories.length > 0;
       } catch (error) {
@@ -107,7 +108,7 @@ export default function ToysPage() {
   // Show loading state while checking localStorage
   if (isLoading) {
     return (
-      <div className="motion-opacity-out-0 motion-duration-1000 motion-ease-out container mx-auto flex min-h-[50vh] items-center justify-center py-8">
+      <div className="container mx-auto flex min-h-[50vh] motion-opacity-out-0 items-center justify-center py-8 motion-ease-out motion-duration-1000">
         <div className="text-center">
           <p className="text-xl">Loading your toys...</p>
         </div>
@@ -118,54 +119,49 @@ export default function ToysPage() {
   // If there are no toys, show a message (the redirect should happen in useEffect)
   if (!userData || !userData.toys || userData.toys.length === 0) {
     return (
-      <div className="container mx-16 flex min-h-screen h-auto items-center justify-center bg-orange-50 py-8">
+      <div className="container mx-16 flex h-auto min-h-screen items-center justify-center bg-orange-50 py-8">
         <div className="text-center">
           <p className="mb-4 text-xl">No characters found</p>
         </div>
       </div>
     );
   }
-  
+
   // Prepare the header actions
   const headerActions = (
     <>
       <div className={`flex flex-row gap-2`}>
         {hasStories && (
-          <Button 
-            onClick={() => router.push('/stories')}
-            variant="outline"
-          >
-            <Library className="size-4 mr-1" />Library
+          <Button onClick={() => router.push('/stories')} variant="outline">
+            <Library className="mr-1 size-4" />
+            Library
           </Button>
         )}
-        <Button 
-          disabled={selectedToys.length === 0} 
+        <Button
+          disabled={selectedToys.length === 0}
           onClick={handleCreateStory}
-          className={`${selectedToys.length > 0 ? 'grayscale-0 motion-scale-loop-[102%] motion-duration-[1500ms]' : ''}grayscale-100 transition-all duration-[1500ms] my-auto mesh-gradient overflow-clip text-black ml-auto`}
+          className={`${selectedToys.length > 0 ? 'motion-scale-loop-[102%] grayscale-0 motion-duration-[1500ms]' : ''}grayscale-100 mesh-gradient my-auto ml-auto overflow-clip text-black transition-all duration-[1500ms]`}
         >
-          <ScrollText className="size-4 mr-1" />Create a Story
+          <ScrollText className="mr-1 size-4" />
+          Create a Story
         </Button>
-        {hasStories && (
-          <Button 
-            onClick={handleSettings}
-            variant="ghost"
-            size="icon"
-            className=""
-            title="Settings"
-          >
-            <Settings className="size-4 text-gray-900 hover:border" />
-          </Button>
-        )}
+        <Button onClick={handleSettings} variant="ghost" size="icon" className="" title="Settings">
+          <Settings className="size-4 text-gray-900 hover:border" />
+        </Button>
       </div>
-      <p className={`${selectedToys.length === 0 ? 'opacity-100' : 'opacity-0'} ${hasStories ? 'hidden' : 'flex'} transition-opacity duration-300 my-auto text-[13px] ml-4`}>Tap some toys to get started!</p>
+      <p
+        className={`${selectedToys.length === 0 ? 'opacity-100' : 'opacity-0'} ${hasStories ? 'hidden' : 'flex'} my-auto ml-4 text-[13px] transition-opacity duration-300`}
+      >
+        Tap some toys to get started!
+      </p>
     </>
   );
-  
+
   return (
-    <div className="min-h-screen h-full pb-24 bg-orange-50">
+    <div className="h-full min-h-screen bg-orange-50 pb-24">
       {/* Header using the PageHeader component */}
       <PageHeader
-        icon="/assets/treasurechest.svg"
+        icon={<Icon iconNode={chest} className="h-16 w-16" />}
         title="Your Toybox"
         description="Each toy you add here syncs directly to the soundboard!"
         actions={headerActions}
@@ -185,7 +181,6 @@ export default function ToysPage() {
             Language Learning Mode</p>
           </div>
       </div> */}
-      
     </div>
   );
 }

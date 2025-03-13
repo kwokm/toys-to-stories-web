@@ -8,13 +8,15 @@ import { useState, useEffect } from 'react';
 import { buildToyCards } from '@/components/toys/toy-cards';
 import Image from 'next/image';
 import { Switch } from '@/components/ui/switch';
-import { ScrollText } from 'lucide-react';
+import { ScrollText, Library, Settings } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 export default function ToysPage() {
   const router = useRouter();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedToys, setSelectedToys] = useState<string[]>([]);
+  const [hasStories, setHasStories] = useState(false);
 
   // Function to handle toy selection
   const handleToySelection = (toyKey: string) => {
@@ -35,6 +37,11 @@ export default function ToysPage() {
     
     // Navigate to the stories/new page
     router.push('/stories/new');
+  };
+
+  // Function to handle settings navigation
+  const handleSettings = () => {
+    router.push('/new-user');
   };
 
   useEffect(() => {
@@ -62,9 +69,30 @@ export default function ToysPage() {
       }
     };
 
+    // Check if user has any stories
+    const checkForStories = () => {
+      if (typeof window === 'undefined') {
+        return false;
+      }
+
+      try {
+        const storiesString = localStorage.getItem('stories');
+        if (!storiesString) {
+          return false;
+        }
+        
+        const stories = JSON.parse(storiesString);
+        return Array.isArray(stories) && stories.length > 0;
+      } catch (error) {
+        console.error('Error checking for stories:', error);
+        return false;
+      }
+    };
+
     // Get the data from localStorage
     const userDataFromStorage = getUserDataFromLocalStorage();
     setUserData(userDataFromStorage);
+    setHasStories(checkForStories());
     setIsLoading(false);
   }, []);
 
@@ -79,9 +107,9 @@ export default function ToysPage() {
   // Show loading state while checking localStorage
   if (isLoading) {
     return (
-      <div className="container mx-auto flex min-h-[50vh] items-center justify-center py-8">
+      <div className="motion-opacity-out-0 motion-duration-1000 motion-ease-out container mx-auto flex min-h-[50vh] items-center justify-center py-8">
         <div className="text-center">
-          <p className="text-xl">Loading your characters...</p>
+          <p className="text-xl">Loading your toys...</p>
         </div>
       </div>
     );
@@ -97,30 +125,51 @@ export default function ToysPage() {
       </div>
     );
   }
+  
+  // Prepare the header actions
+  const headerActions = (
+    <>
+      <div className={`flex flex-row gap-2`}>
+        {hasStories && (
+          <Button 
+            onClick={() => router.push('/stories')}
+            variant="outline"
+          >
+            <Library className="size-4 mr-1" />Library
+          </Button>
+        )}
+        <Button 
+          disabled={selectedToys.length === 0} 
+          onClick={handleCreateStory}
+          className={`${selectedToys.length > 0 ? 'grayscale-0 motion-scale-loop-[102%] motion-duration-[1500ms]' : ''}grayscale-100 transition-all duration-[1500ms] my-auto mesh-gradient overflow-clip text-black ml-auto`}
+        >
+          <ScrollText className="size-4 mr-1" />Create a Story
+        </Button>
+        {hasStories && (
+          <Button 
+            onClick={handleSettings}
+            variant="ghost"
+            size="icon"
+            className=""
+            title="Settings"
+          >
+            <Settings className="size-4 text-gray-900 hover:border" />
+          </Button>
+        )}
+      </div>
+      <p className={`${selectedToys.length === 0 ? 'opacity-100' : 'opacity-0'} ${hasStories ? 'hidden' : 'flex'} transition-opacity duration-300 my-auto text-[13px] ml-4`}>Tap some toys to get started!</p>
+    </>
+  );
+  
   return (
     <div className="min-h-screen h-full pb-24 bg-orange-50">
-      {/* Header Shelf  */}
-      <div className="flex flex-row rounded-b-2xl bg-white px-12 py-12 border-b-orange-300 border">
-        <div className="flex flex-row gap-2">
-          <Image className="fill-orange-300 my-auto" src="/assets/treasurechest.svg" alt="Treasure Chest" width={64} height={64} />
-          <div className="flex gap-2 flex-col">
-            <h1 className=" font-bricolage text-4xl text-slate-900 not-only:font-[900]">Your Toybox</h1>
-            <p className="ml-1 text-base text-gray-600">
-            Each toy you add here syncs directly to the soundboard!</p>
-          </div>
-        </div>
-        <div className="flex flex-col gap-1 ml-auto mt-auto">
-          <Button 
-            disabled={selectedToys.length === 0} 
-            onClick={handleCreateStory}
-            className={`${selectedToys.length > 0 ? 'grayscale-0 motion-scale-loop-[102%] motion-duration-[1500ms]' : ''}grayscale-100 transition-all duration-[1500ms] my-auto mesh-gradient overflow-clip text-black ml-auto`}
-          >
-            <ScrollText className="size-4" />Create a Story
-          </Button>
-        <p className={`${selectedToys.length === 0 ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 my-auto text-[13px] ml-4`}>Tap some toys to get started!</p>
-        </div>
-      </div>
-      {/* End Header Shelf  */}
+      {/* Header using the PageHeader component */}
+      <PageHeader
+        icon="/assets/treasurechest.svg"
+        title="Your Toybox"
+        description="Each toy you add here syncs directly to the soundboard!"
+        actions={headerActions}
+      />
 
       {/* Start Lower Area */}
       <div className="px-12 pt-12">

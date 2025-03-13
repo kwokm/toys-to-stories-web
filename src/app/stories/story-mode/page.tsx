@@ -178,7 +178,7 @@ export default function StoryModePage() {
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center py-8 text-white bg-black">
+      <div className="h-full flex items-center justify-center py-8 text-white ">
         <div className="text-center">
           <p className="text-xl">Loading your story...</p>
         </div>
@@ -212,7 +212,7 @@ export default function StoryModePage() {
   const pageNumber = pageNumberMatch ? pageNumberMatch[1] : (currentPage + 1).toString();
 
   return (
-    <div className="min-h-screen h-full bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen h-full bg-black motion-bg-in-[#fff7ea] motion-duration-2000 motion-ease-out text-white relative overflow-hidden">
       {useSampleData && (
         <div className="bg-orange-600 text-white text-center py-2 px-4">
           <p className="text-sm">Using sample story data. Create your own story to see it here!</p>
@@ -220,7 +220,7 @@ export default function StoryModePage() {
       )}
       
       {/* Header */}
-      <div className="bg-black p-6 border-b border-gray-800 relative z-10">
+      <div className="bg-black p-6 border-b border-gray-800 relative z-10 motion-bg-in-[#fff7ea] motion-duration-2000 motion-ease-out">
         <div className="container mx-auto flex items-center justify-between">
           <Button variant="ghost" onClick={goHome} className="hover:bg-gray-900 text-white">
             <Home className="mr-2 h-4 w-4" />
@@ -325,7 +325,7 @@ export default function StoryModePage() {
               </div>
             
               {/* Gradient mask for top fade effect */}
-              <div className="absolute top-0 left-0 right-0 h-[35%] bg-gradient-to-b from-black via-black to-transparent z-10 pointer-events-none"></div>
+              <div className="absolute top-0 left-0 right-0 h-[35%] bg-gradient-to-b from-black via-black to-transparent z-10 motion-opacity-in-[0] motion-delay-2000 motion-duration-2000 motion-ease-out pointer-events-none"></div>
               
               <Carousel
                 setApi={setCarouselApi}
@@ -384,7 +384,7 @@ export default function StoryModePage() {
               </Carousel>
               
               {/* Gradient mask for bottom fade effect */}
-              <div className="absolute bottom-0 left-0 right-0 h-[35%] bg-gradient-to-t from-black via-black to-transparent z-10 pointer-events-none"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-[35%] motion-opacity-in-[0] motion-delay-1500 motion-duration-2000 motion-ease-out bg-gradient-to-t from-black via-black to-transparent z-10 pointer-events-none"></div>
             </div>
           </div>
         )}

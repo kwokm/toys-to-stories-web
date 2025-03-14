@@ -27,10 +27,10 @@ export const TakePicture: React.FC<TakePictureProps> = ({
   return (
     <div className="flex flex-col gap-4 pb-8">
       <h2 className="pb-0 text-center text-3xl font-[700] text-gray-800">
-        Let's bring your child's favorite toy to life!
+        Let&apos;s bring your child&apos;s favorite toy to life!
       </h2>
       <p className="pb-4 text-left text-base text-gray-600">
-        Snap a photo of your child's favorite toy, and it will become an imaginary friend in a
+        Snap a photo of your child&apos;s favorite toy, and it will become an imaginary friend in a
         personalized story! Along the way, your child will learn four new words in the chosen
         language.
       </p>

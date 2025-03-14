@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Pencil, Volume } from 'lucide-react';
@@ -24,6 +24,9 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
   animationFirst,
   setAnimationFirst,
 }) => {
+  // Add loading state for translations
+  const [translatingIndices, setTranslatingIndices] = useState<number[]>([]);
+
   // Animation effect
   useEffect(() => {
     // Set a timeout to change the animation state after a set time.
@@ -56,13 +59,71 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
   const currentToy = userData.toys && userData.toys.length > 0 ? userData.toys[0] : null;
   const vocabData = currentToy?.vocab || [];
 
+  // Function to translate a word using the translation API
+  const translateWord = async (word: string, index: number) => {
+    if (!word.trim() || !userData.language) return;
+    
+    // Set loading state
+    setTranslatingIndices(prev => [...prev, index]);
+    
+    try {
+      // Call the translation API route
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          word: word.trim(),
+          targetLanguage: userData.language,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Translation failed with status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Update the vocabulary word with the translation
+      if (currentToy && currentToy.vocab) {
+        const updatedVocab = [...currentToy.vocab];
+        updatedVocab[index] = { 
+          ...updatedVocab[index], 
+          translation: data.translation 
+        };
+        
+        const updatedToy = { ...currentToy, vocab: updatedVocab };
+        setUserData(prev => ({ ...prev, toys: [updatedToy] }));
+      }
+    } catch (error) {
+      console.error('Translation failed:', error);
+    } finally {
+      // Remove loading state
+      setTranslatingIndices(prev => prev.filter(i => i !== index));
+    }
+  };
+
   // Function to update vocabulary word
   const updateVocabWord = (index: number, word: string) => {
-    if (currentToy && currentToy.vocab && currentToy.vocab.length > index) {
-      const updatedVocab = [...currentToy.vocab];
-      updatedVocab[index] = { ...updatedVocab[index], word };
-      const updatedToy = { ...currentToy, vocab: updatedVocab };
-      setUserData(prev => ({ ...prev, toys: [updatedToy] }));
+    if (currentToy && currentToy.vocab) {
+      // If we have vocab data at this index, update it
+      if (index < currentToy.vocab.length) {
+        const updatedVocab = [...currentToy.vocab];
+        updatedVocab[index] = { ...updatedVocab[index], word };
+        const updatedToy = { ...currentToy, vocab: updatedVocab };
+        setUserData(prev => ({ ...prev, toys: [updatedToy] }));
+      } 
+      // If this is a new vocab word, add it
+      else {
+        const updatedVocab = [...currentToy.vocab];
+        updatedVocab[index] = { word };
+        const updatedToy = { ...currentToy, vocab: updatedVocab };
+        setUserData(prev => ({ ...prev, toys: [updatedToy] }));
+      }
+      
+      // Trigger translation after updating the word
+      translateWord(word, index);
     }
   };
 
@@ -163,11 +224,16 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
                   </Button>
                 </div>
 
-                {vocabData[index]?.translation && (
-                  <p className="text-left text-base text-lg text-zinc-500">
-                    {vocabData[index]?.translation}
-                  </p>
-                )}
+                {/* Translation with loading state */}
+                <p className={`text-left text-base text-lg text-zinc-500 ${
+                  translatingIndices.includes(index) 
+                    ? 'relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent'
+                    : ''
+                }`}>
+                  {translatingIndices.includes(index) 
+                    ? 'Translating...' 
+                    : vocabData[index]?.translation || ''}
+                </p>
               </div>
             ))}
           </div>

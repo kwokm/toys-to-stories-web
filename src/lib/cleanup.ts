@@ -1,5 +1,6 @@
 import { ToyData, UserData } from '@/types/types';
 import { saveUserDataToLocalStorage } from '@/lib/saveData';
+import { saveUserData } from '@/lib/dataService';
 
 // Helper function to get existing user data from localStorage
 export function getExistingUserData(): UserData | null {
@@ -86,10 +87,9 @@ export async function cleanupUserData(
           finalUserData = { ...userData, toys: [processedToy] };
         }
 
-        // Save the updated user data to localStorage
-        saveUserDataToLocalStorage(finalUserData);
-        console.log('USER DATA ON LOCALSTORAGE ');
-        console.log(localStorage.getItem('userData'));
+        // Save the updated user data to both localStorage and cloud storage
+        saveUserData(finalUserData);
+        console.log('USER DATA SAVED TO LOCALSTORAGE AND CLOUD');
 
         // Prepare the soundboard with the updated user data
         fetch('/api/soundboard-prep', {
@@ -105,7 +105,7 @@ export async function cleanupUserData(
         setCleaning(false);
         return result;
       }
-      setCleaning(false);
+      // setCleaning(false);
       return null;
     })
     .catch(error => {

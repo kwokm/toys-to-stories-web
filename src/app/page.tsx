@@ -45,6 +45,20 @@ function EmptyHome() {
     router.push('/toys');
   };
 
+  // Function to handle Get Started button click
+  const handleGetStarted = () => {
+    // Check if user data exists in localStorage
+    const userData = getUserData();
+    
+    if (userData) {
+      // If user data exists, redirect to toys page
+      router.push('/toys');
+    } else {
+      // If no user data, go to new user flow
+      router.push('/new-user');
+    }
+  };
+
   return (
     <motion.div 
       className="align-center flex min-h-screen w-screen pb-24 bg-orange-50"
@@ -82,12 +96,14 @@ function EmptyHome() {
             Triple-click the image to load demo data
           </p>
         </div>
-        <Link href="/new-user">
-          <Button size="lg" className="w-64 py-6 text-lg">
-            <Shapes className="h-3.5 w-3.5" />
-            Get Started
-          </Button>
-        </Link>
+        <Button 
+          size="lg" 
+          className="w-64 py-6 text-lg"
+          onClick={handleGetStarted}
+        >
+          <Shapes className="h-3.5 w-3.5" />
+          Get Started
+        </Button>
       </div>
 
       {/* Demo Data Modal */}

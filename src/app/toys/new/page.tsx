@@ -6,7 +6,6 @@ import Stepper, { StepContent } from '@/components/setup/stepper';
 import { ToyData, UserData } from '@/types/types';
 import { redirect, useRouter } from 'next/navigation';
 import { cleanupUserData, getExistingUserData } from '@/lib/cleanup';
-import { saveUserDataToLocalStorage } from '@/lib/saveData';
 
 // Import the step components
 import LanguageSelection from '@/components/setup/LanguageSelection';

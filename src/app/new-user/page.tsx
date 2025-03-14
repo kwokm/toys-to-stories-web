@@ -4,16 +4,15 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Stepper, { StepContent } from '@/components/setup/stepper';
 import { ToyData, UserData } from '@/types/types';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { saveUserData } from '@/lib/dataService';
+import { cleanupUserData } from '@/lib/cleanup';
 
 // Import the step components
 import LanguageSelection from '@/components/setup/LanguageSelection';
 import ReadingLevelSelection from '@/components/setup/ReadingLevelSelection';
 import TakePicture from '@/components/setup/TakePicture';
 import { BringToLife } from '@/components/setup/BringToLife';
-import router from 'next/router';
 
 // Define the steps for the stepper
 const steps = [
@@ -24,6 +23,7 @@ const steps = [
 ];
 
 export default function NewUser() {
+  const router = useRouter();
   const [userData, setUserData] = useState<UserData>({
     language: null,
     readingLevel: null,
@@ -44,31 +44,14 @@ export default function NewUser() {
   const [cleaning, setCleaning] = useState<boolean>(false);
 
   // Function to handle completion of the setup process
-  const handleComplete = async () => {
-    try {
-      setCleaning(true);
-      
-      // Prepare the soundboard with the user data
-      await fetch('/api/soundboard-prep', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userData,
-        }),
-      });
-      
-      // Save the user data using our dataService
-      saveUserData(userData);
-      
-      // Redirect to the toys page
+  const handleComplete = () => {
+    // Use the same cleanupUserData function as toys/new/page.tsx
+    // Pass false to indicate this is NOT a new toy to add to existing data (it's a new user)
+    cleanupUserData(userData, setCleaning, false).then(() => {
       router.push('/toys');
-    } catch (error) {
+    }).catch(error => {
       console.error('Error during user setup:', error);
-    } finally {
-      setCleaning(false);
-    }
+    });
   };
 
   return (

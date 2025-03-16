@@ -4,37 +4,44 @@ import { NextRequest, NextResponse } from 'next/server';
 // Initialize the Gemini API with the server-side API key
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
+interface GeneralGeminiAPIRequest {
+    prompt: string;
+    settings?: {
+        temperature?: number;
+        maxOutputTokens?: number;
+    };
+}
+
+const defaultSettings = {
+  temperature: 1,
+  maxOutputTokens: 8192,
+};
+
 export async function POST(request: NextRequest) {
-  try {
-    // Parse the request body
-    const body = await request.json();
-    const { prompt, model = 'gemini-1.5-flash', temperature = 1, maxTokens = 8192 } = body;
+    try {
+        // Parse the request body
+        const body: GeneralGeminiAPIRequest = await request.json();
 
-    if (!prompt) {
-      return NextResponse.json(
-        { error: 'Prompt is required' },
-        { status: 400 }
-      );
-    }
+    const requestSettings = body.settings || defaultSettings;
 
-    // Initialize the model
+    // Initialize the model - using gemini-2.0-flash for quick translations
     const geminiModel = genAI.getGenerativeModel({
-      model,
-      generationConfig: {
-        temperature,
-        maxOutputTokens: maxTokens,
-      },
+      model: 'gemini-2.0-flash',
+        generationConfig: {
+            temperature: requestSettings.temperature, // Lower temperature for more deterministic translations
+            maxOutputTokens: requestSettings.maxOutputTokens, // Short response is all we need
+        },
     });
 
     // Generate content
-    const result = await geminiModel.generateContent(prompt);
+    const result = await geminiModel.generateContent(body.prompt);
     const response = await result.response;
-    const text = response.text();
+    const translation = response.text().trim();
 
     // Return the response
-    return NextResponse.json({ text });
+    return NextResponse.json({ translation });
   } catch (error: any) {
-    console.error('Gemini API error:', error);
+    console.error('General Gemini API error:', error);
     return NextResponse.json(
       { error: error.message || 'An error occurred while processing your request' },
       { status: 500 }

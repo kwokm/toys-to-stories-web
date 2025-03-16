@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { UserData } from '@/types/types';
 import { TypewriterEffectSmooth } from '@/components/typewriter';
+import { GeminiGeneral } from '@/lib/gemini/general';
 
 interface BringToLifeProps {
   userData: UserData;
@@ -59,7 +60,7 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
   const currentToy = userData.toys && userData.toys.length > 0 ? userData.toys[0] : null;
   const vocabData = currentToy?.vocab || [];
 
-  // Function to translate a word using the translation API
+  // Function to translate a word using GeminiGeneral
   const translateWord = async (word: string, index: number) => {
     if (!word.trim() || !userData.language) return;
     
@@ -67,30 +68,22 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
     setTranslatingIndices(prev => [...prev, index]);
     
     try {
-      // Call the translation API route
-      const response = await fetch('/api/translate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          word: word.trim(),
-          targetLanguage: userData.language,
-        }),
-      });
+      // Create prompt for translation
+      const prompt = `Translate this word "${word}" to ${userData.language}. Provide ONLY the translated word without any explanation or formatting, just one single word as the translation.`;
+      const settings = {
+        temperature: 0.2,
+        maxOutputTokens: 50,
+      };
       
-      if (!response.ok) {
-        throw new Error(`Translation failed with status: ${response.status}`);
-      }
-      
-      const data = await response.json();
+      // Call GeminiGeneral for translation
+      const translation = await GeminiGeneral(JSON.stringify({ prompt, settings }));
       
       // Update the vocabulary word with the translation
       if (currentToy && currentToy.vocab) {
         const updatedVocab = [...currentToy.vocab];
         updatedVocab[index] = { 
           ...updatedVocab[index], 
-          translation: data.translation 
+          translation: translation.trim() 
         };
         
         const updatedToy = { ...currentToy, vocab: updatedVocab };
@@ -225,11 +218,7 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
                 </div>
 
                 {/* Translation with loading state */}
-                <p className={`text-left text-base text-lg text-zinc-500 ${
-                  translatingIndices.includes(index) 
-                    ? 'relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent'
-                    : ''
-                }`}>
+                <p className={`text-left text-base text-lg text-zinc-500 ${translatingIndices.includes(index) ? 'animate-pulse' : ''}`}>
                   {translatingIndices.includes(index) 
                     ? 'Translating...' 
                     : vocabData[index]?.translation || ''}

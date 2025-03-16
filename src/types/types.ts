@@ -19,7 +19,7 @@ export interface VocabData {
   word: string;
   translation?: string;
   pronounceUrl?: string;
-  translatePronounceUrl?: string;
+  pronounceTranslateUrl?: string;
   audioFile?: string;
 }
 

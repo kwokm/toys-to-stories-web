@@ -8,7 +8,7 @@ import { identifyToy, chooseVocabulary } from '@/lib/gemini';
 
 export async function POST(request: NextRequest) {
   try {
-    const { imageUrl, fileName } = await request.json();
+    const { imageUrl, fileName, language } = await request.json();
     if (!imageUrl) {
       return NextResponse.json({ error: 'No image URL provided' }, { status: 400 });
     }
@@ -53,8 +53,7 @@ export async function POST(request: NextRequest) {
     const identifyToyResult = await identifyToy(`${publicPath}`, `image/${extension}`);
     console.log('JSON IS', JSON.parse(identifyToyResult));
     const toyTitle = JSON.parse(identifyToyResult).Item;
-    const language = JSON.parse(identifyToyResult).language;
-    const chooseVocabularyResult = await chooseVocabulary(toyTitle, 'Spanish');
+    const chooseVocabularyResult = await chooseVocabulary(toyTitle, language);
 
     return NextResponse.json({
       success: true,

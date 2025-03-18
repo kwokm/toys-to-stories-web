@@ -41,12 +41,7 @@ export async function POST(request: NextRequest) {
         await processImageServerSide(toy.image, toy.key);
 
         // Read the processed BMP file
-        let bmpPath = '';
-        if (process.cwd() === '/api/soundboard-prep') {
-          bmpPath = `/tmp/${toy.key}.bmp`;
-        } else {
-          bmpPath = path.join(`/tmp/${toy.key}.bmp`);
-        }
+        let bmpPath = `/tmp/${toy.key}.bmp`;
 
         // Check if the file exists before trying to read it
         if (fs.existsSync(bmpPath)) {

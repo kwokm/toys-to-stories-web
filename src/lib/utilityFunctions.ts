@@ -66,7 +66,7 @@ export async function processImageServerSide(inputURL: string, outputFileName: s
 
     canvas.composite(image, xOffset, yOffset);
     canvas.threshold({ max: 128 });
-    await canvas.write(`tmp/${outputFileName}.bmp`);
+    await canvas.write(`/tmp/${outputFileName}.bmp`);
     console.log(`Image processed and saved to tmp/${outputFileName}.bmp`);
   } catch (error) {
     console.error('Error processing image:', error);

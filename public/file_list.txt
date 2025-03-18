@@ -16,6 +16,7 @@
 /Animal-Bird-Vulture-Hiss.wav
 /cymbal_drop.wav
 /groovy-disco-dance.wav
+/run-quick.wav
 /Animal-Mammal-Carnivore-Grizzly-Bear-Growl.wav
 /Sports-Pool-Balls-Hitting-Balls.wav
 /Animal-Mammal-Carnivore-Dog-Bull-Terrier-Growl_1.wav
@@ -34,6 +35,7 @@
 /Animal-Mammal-Carnivore-Cat-Wildcat-Hiss.wav
 /Animal-Mammal-Herbivore-Hippopotamus-Grunt.wav
 /Animal-Frog-Tree-Frog-Quack.wav
+/.DS_Store
 /Science-Fiction-Sci-Fi-Electronic-Energy-Pulse-Medium.wav
 /water-splashes.wav
 /Animal-Mammal-Carnivore-Tiger-Cub-Roar.wav
@@ -54,6 +56,7 @@
 /slip-fall.wav
 /Animal-Mammal-Carnivore-Cat-Domestic-Cat-Growl.wav
 /Horse-Neigh.wav
+/Human Male Chews Food Crunchy Mouth Open 02.wav
 /conga_roll_.wav
 /Animal-Mammal-Carnivore-Tiger-Snarl_1.wav
 /Animal-Mammal-Carnivore-Grizzly-Bear-Growl_1.wav
@@ -175,10 +178,12 @@
 /Animal-Mammal-Carnivore-Cat-Puma-Breath_1.wav
 /Triceratops-Roar.wav
 /Animal-Primate-Monkey-Ringtail-Monkey-Call.wav
+/magic-twinkle-sparkle.mp3
 /Human-Male-Yawn.wav
 /Animal-Mammal-Carnivore-Cat-Ocelot-Hiss.wav
 /Human-Female-Laughing.wav
 /racecar.wav
+/wash.wav
 /plastic_squeak_b.wav
 /squeaky-toy.wav
 /Animal-Dog-two-barks.wav
@@ -269,6 +274,7 @@
 /Animal-Mammal-Herbivore-Chipmunk-Chatter_1.wav
 /coocoo_flute.wav
 /Animal-Mammal-Carnivore-Elephant-Seal-Cub-Call.wav
+/heart-beat.wav
 /Animal-Mammal-Carnivore-Cat-Puma-Growl.wav
 /Liquid-Water-Water-Plastic-Bag-Fill-With-Water.wav
 /Animal-Primate-Monkey-Capuchin-Growl.wav
@@ -287,6 +293,8 @@
 /rattle_metal.wav
 /Animal-Mammal-Carnivore-Cat-Domestic-Cat-Meow_1.wav
 /Human-Male-Pirate-Laugh-Short.wav
+/elephant-trumpet.wav
+/animal-stomp.wav
 /Animal-Mammal-Herbivore-Beaver-Call.wav
 /Human-Female-Cough.wav
 /Animal-Mammal-Carnivore-River-Otter-Snarl_1.wav

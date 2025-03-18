@@ -44,7 +44,10 @@ export async function POST(request: NextRequest) {
         await processImageServerSide(toy.image, toy.key);
 
         // Read the processed BMP file
-        const bmpPath = `tmp/${toy.key}.bmp`;
+        let bmpPath = `tmp/${toy.key}.bmp`;
+        if (process.cwd() === '/var/task') {
+          bmpPath = path.join(process.cwd(), '../../tmp', `${toy.key}.bmp`);
+        }
 
         // Check if the file exists before trying to read it
         if (fs.existsSync(bmpPath)) {

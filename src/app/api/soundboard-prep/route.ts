@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         // Read the processed BMP file
         let bmpPath = '';
         if (process.cwd() === '/api/soundboard-prep') {
-          bmpPath = path.join(`../../tmp/${toy.key}.bmp`);
+          bmpPath = `/tmp/${toy.key}.bmp`;
         } else {
           bmpPath = path.join(`/tmp/${toy.key}.bmp`);
         }

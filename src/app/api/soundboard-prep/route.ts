@@ -98,6 +98,7 @@ async function processImageServerSide(inputURL: string, outputFileName: string) 
   );
 
   try {
+    console.log('OUTPUT IS ', output);
     const image = await Jimp.read(output as Buffer);
     const originalWidth = image.bitmap.width;
     const originalHeight = image.bitmap.height;
@@ -127,6 +128,7 @@ async function processImageServerSide(inputURL: string, outputFileName: string) 
     
     // Get the buffer directly from the canvas
     const buffer = await canvas.getBuffer('image/bmp');
+    console.log('CANVAS BUFFER IS ', buffer);
     
     // Upload directly to Vercel Blobs
     const blobResult = await put(`${outputFileName}.bmp`, buffer, {

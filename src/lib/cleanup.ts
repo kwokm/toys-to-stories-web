@@ -12,7 +12,7 @@ export function getExistingUserData(): UserData | null {
     const userDataString = localStorage.getItem('userData');
     if (!userDataString) {
       console.log('No user data found in localStorage');
-      return null;
+      return null;  
     }
 
     const parsedData = JSON.parse(userDataString) as UserData;
@@ -102,7 +102,6 @@ export async function cleanupUserData(
           }),
         });
         console.log('bmp saved');
-        setCleaning(false);
         return result;
       }
       // setCleaning(false);

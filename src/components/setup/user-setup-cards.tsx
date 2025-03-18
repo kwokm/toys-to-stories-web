@@ -20,47 +20,47 @@ import React from 'react';
 
 const languages = [
   {
-    value: 'RU',
+    value: 'ru',
     label: 'Russian',
   },
   {
-    value: 'AR',
+    value: 'ar',
     label: 'Arabic',
   },
   {
-    value: 'PT',
+    value: 'pt',
     label: 'Portuguese',
   },
   {
-    value: 'TR',
+    value: 'tr',
     label: 'Turkish',
   },
   {
-    value: 'NL',
+    value: 'nl',
     label: 'Dutch',
   },
   {
-    value: 'VN',
+    value: 'vi',
     label: 'Vietnamese',
   },
   {
-    value: 'GR',
+    value: 'el',
     label: 'Greek',
   },
   {
-    value: 'PL',
+    value: 'pl',
     label: 'Polish',
   },
   {
-    value: 'SE',
+    value: 'sv',
     label: 'Swedish',
   },
   {
-    value: 'IR',
+    value: 'ga',
     label: 'Irish',
   },
   {
-    value: 'NO',
+    value: 'no',
     label: 'Norwegian',
   },
 ];
@@ -68,12 +68,20 @@ const languages = [
 function OtherLanguageSelector({
   onSelect,
   className,
+  initialLanguage,
 }: {
   onSelect: (language: string) => void;
   className?: string;
+  initialLanguage?: string | null;
 }) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState('');
+  const [value, setValue] = React.useState(() => {
+    // Initialize with the matching language value if it exists in our options
+    if (initialLanguage && languages.some(lang => lang.value === initialLanguage)) {
+      return initialLanguage;
+    }
+    return '';
+  });
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -102,11 +110,8 @@ function OtherLanguageSelector({
                   value={language.value}
                   onSelect={currentValue => {
                     setValue(currentValue === value ? '' : currentValue);
-                    const selectedLanguage = languages.find(
-                      lang => lang.value === currentValue
-                    )?.label;
-                    if (selectedLanguage && currentValue !== value) {
-                      onSelect(selectedLanguage);
+                    if (currentValue !== value) {
+                      onSelect(currentValue);
                     }
                     setOpen(false);
                   }}

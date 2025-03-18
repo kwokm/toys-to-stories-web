@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+    console.log('Language is', language);
 
     const imageBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(imageBuffer);

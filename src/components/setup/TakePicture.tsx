@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { UploadButton } from '@/lib/uploadthing';
 import { CameraIcon, SwitchCameraIcon } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { ToyData, UserData } from '@/types/types';
+import { ToyData, UserData, languageCodes } from '@/types/types';
 
 interface TakePictureProps {
   userData: UserData;
@@ -74,10 +74,9 @@ export const TakePicture: React.FC<TakePictureProps> = ({
               ...prevUserData,
               toys: [newToy],
             }));
-            console.log(res[0].url);
 
             // Download the image to the server
-            fetch('/api/download-image', {
+            fetch('/api/process-photo', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -85,6 +84,7 @@ export const TakePicture: React.FC<TakePictureProps> = ({
               body: JSON.stringify({
                 imageUrl: res[0].url,
                 fileName: res[0].name,
+                language: languageCodes[userData.language as keyof typeof languageCodes],
               }),
             })
               .then(response => response.json())

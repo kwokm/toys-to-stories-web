@@ -5,7 +5,6 @@ export interface ToyData {
   vocab?: VocabData[];
   key: string;
   image: string;
-  bmpUrl?: string;
   personalityTraits?: string[];
 }
 
@@ -18,8 +17,6 @@ export interface UserData {
 export interface VocabData {
   word: string;
   translation?: string;
-  pronounceUrl?: string;
-  pronounceTranslateUrl?: string;
   audioFile?: string;
 }
 
@@ -49,3 +46,26 @@ export interface Story {
     };
   };
 }
+
+export const languageCodes = {
+  "en": "English",
+  "es": "Spanish",
+  "fr": "French",
+  "de": "German",
+  "it": "Italian",
+  "ja": "Japanese",
+  "zh": "Chinese (Mandarin)",
+  "ru": "Russian",
+  "ko": "Korean",
+  "ar": "Arabic",
+  "pt": "Portuguese",
+  "tr": "Turkish",
+  "nl": "Dutch",
+  "vi": "Vietnamese",
+  "el": "Greek",
+  "pl": "Polish",
+  "sv": "Swedish",
+  "ga": "Irish",
+  "no": "Norwegian",
+  "hi": "Hindi",
+};

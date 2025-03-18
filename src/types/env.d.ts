@@ -10,6 +10,10 @@ declare namespace NodeJS {
     GOOGLE_GENERATIVE_AI_API_KEY: string;
     REPLICATE_API_TOKEN: string;
     
+    // Upstash Redis environment variables
+    UPSTASH_REDIS_REST_URL: string;
+    UPSTASH_REDIS_REST_TOKEN: string;
+    
     // Add other environment variables here as needed
     NODE_ENV: 'development' | 'production' | 'test';
   }

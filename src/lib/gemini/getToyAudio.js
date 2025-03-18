@@ -43,7 +43,7 @@ async function waitForFilesActive(files) {
     let file = await fileManager.getFile(name);
     while (file.state === "PROCESSING") {
       process.stdout.write(".")
-      await new Promise((resolve) => setTimeout(resolve, 10_000));
+      /* await new Promise((resolve) => setTimeout(resolve, 10_000)); */
       file = await fileManager.getFile(name)
     }
     if (file.state !== "ACTIVE") {

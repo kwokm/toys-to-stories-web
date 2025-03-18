@@ -1,28 +1,20 @@
 'use server';
 
+// Creates and uploads initial BMPs for the soundboard
+
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { UserData, ToyData } from '@/types/types';
 import { processImageServerSide } from '@/lib/utilityFunctions';
 import { put } from '@vercel/blob';
+import { saveUserDataToCloud } from '@/lib/dataService';
 
 export async function POST(request: NextRequest) {
   try {
     // Parse the request data
     const requestData = await request.json();
     console.log('REQUEST DATA IS ', requestData);
-
-    // Make sure the tmp directory exists
-    if (!fs.existsSync('tmp')) {
-      fs.mkdirSync('tmp', { recursive: true });
-    }
-
-    // Save the original userData to tmp
-    await fs.promises.writeFile('tmp/userData.json', JSON.stringify(requestData), 'utf8');
-
-    // Process each toy's image and upload to Vercel Blob
-    const updatedToys = [];
 
     // Validate that toys exists and is an array
     if (!requestData.toys || !Array.isArray(requestData.toys)) {
@@ -59,50 +51,18 @@ export async function POST(request: NextRequest) {
           // Upload the BMP file to Vercel Blob
           const blobResult = await put(`${toy.key}.bmp`, fs.readFileSync(bmpPath), {
             access: 'public',
+            addRandomSuffix: false
           });
 
-          // Update the toy with the blob URL
-          const updatedToy = {
-            ...toy,
-            bmpUrl: blobResult.url,
-          };
-
-          updatedToys.push(updatedToy);
           console.log(`Processed and uploaded ${toy.key}.bmp to ${blobResult.url}`);
         } else {
           console.error(`BMP file not found at ${bmpPath}`);
-          updatedToys.push(toy); // Keep the original toy if processing failed
         }
       } catch (error) {
         console.error(`Error processing toy ${toy.key}:`, error);
-        updatedToys.push(toy); // Keep the original toy if processing failed
       }
     }
 
-    // Create updated userData with the processed toys
-    const updatedUserData = {
-      ...requestData,
-      toys: updatedToys,
-    };
-
-    // Save the updated userData to tmp file
-    const updatedUserDataPath = 'tmp/updatedUserData.json';
-    await fs.promises.writeFile(updatedUserDataPath, JSON.stringify(updatedUserData), 'utf8');
-
-    // Upload the updatedUserData to Vercel Blob
-    let userDataBlobUrl = null;
-    try {
-      // Generate a unique filename with timestamp to avoid caching issues
-      const timestamp = new Date().getTime();
-      const userDataBlobResult = await put(`userData.json`, fs.readFileSync(updatedUserDataPath), {
-        access: 'public',
-        contentType: 'application/json',
-      });
-      userDataBlobUrl = userDataBlobResult.url;
-      console.log(`Uploaded userData to Blob: ${userDataBlobUrl}`);
-    } catch (error) {
-      console.error('Error uploading userData to Blob:', error);
-    }
 
     // Read the tmp directory for debugging
     const files = fs.readdirSync('tmp');
@@ -110,10 +70,7 @@ export async function POST(request: NextRequest) {
 
     // Return the success response with updated data
     return NextResponse.json({
-      success: true,
-      userData: updatedUserData,
-      toys: updatedToys,
-      userDataBlobUrl: userDataBlobUrl,
+      success: true
     });
   } catch (error: any) {
     console.error('Error processing user data:', error);

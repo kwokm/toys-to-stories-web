@@ -84,7 +84,7 @@ export const BookVisualization = ({
     return (
       <div 
         className={cn(
-          "relative h-[350px] w-[250px] opacity-70 blur-[2px] rotate-x-1",
+          "relative h-[350px] w-[250px] opacity-70 rotate-x-1",
           className
         )}
         style={{ transform: `rotateZ(2deg)` }}

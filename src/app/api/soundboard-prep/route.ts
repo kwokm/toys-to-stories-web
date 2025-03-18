@@ -14,25 +14,22 @@ export async function POST(request: NextRequest) {
   try {
     // Parse the request data
     const requestData = await request.json();
+    const toys = requestData.userData.toys;
     console.log('REQUEST DATA IS ', requestData);
 
     // Validate that toys exists and is an array
-    if (!requestData.toys || !Array.isArray(requestData.toys)) {
-      console.error('requestData.toys is not an array:', requestData.toys);
-
-      // Check if toys might be nested in userData property
-      if (requestData.userData && Array.isArray(requestData.userData.toys)) {
-        console.log('Found toys in requestData.userData');
-        requestData.toys = requestData.userData.toys;
-      } else {
-        // If no toys found, create an empty array to avoid errors
-        console.log('No toys found in request, using empty array');
-        requestData.toys = [];
-      }
+    if (!requestData.userData.toys) {
+      console.error('requestData.toys is not an array:', requestData.userData.toys);
+      return NextResponse.json({
+        error: 'Failed to process user data',
+        message: 'No toys found in request',
+      },
+        { status: 500 }
+      );
     }
 
     // Process images sequentially to avoid race conditions
-    for (const toy of requestData.toys) {
+    for (const toy of toys) {
       // Validate toy object has required properties
       if (!toy || !toy.image || !toy.key) {
         console.error('Invalid toy object:', toy);

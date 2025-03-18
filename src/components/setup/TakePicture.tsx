@@ -78,7 +78,7 @@ export const TakePicture: React.FC<TakePictureProps> = ({
             // Download the image to the server
             fetch('/api/process-photo', {
               method: 'POST',
-              headers: {
+            headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({

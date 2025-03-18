@@ -5,6 +5,8 @@ import Replicate from 'replicate';
 import { writeFile } from 'node:fs/promises';
 import fs from 'node:fs';
 import { ToyData } from '@/types/types';
+import { put } from '@vercel/blob';
+
 export async function removeBackground(
   inputPath: string,
   outputPath: string,
@@ -66,8 +68,18 @@ export async function processImageServerSide(inputURL: string, outputFileName: s
 
     canvas.composite(image, xOffset, yOffset);
     canvas.threshold({ max: 128 });
-    await canvas.write(`/tmp/${outputFileName}.bmp`);
-    console.log(`Image processed and saved to tmp/${outputFileName}.bmp`);
+    
+    // Get the buffer directly from the canvas
+    const buffer = await canvas.getBuffer('image/bmp');
+    
+    // Upload directly to Vercel Blobs
+    const blobResult = await put(`${outputFileName}.bmp`, buffer, {
+      access: 'public',
+      addRandomSuffix: false
+    });
+    
+    console.log(`Image processed and uploaded to ${blobResult.url}`);
+    return blobResult.url;
   } catch (error) {
     console.error('Error processing image:', error);
     throw error;

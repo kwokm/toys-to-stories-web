@@ -38,23 +38,8 @@ export async function POST(request: NextRequest) {
 
       // Process the image to BMP format
       try {
-        await processImageServerSide(toy.image, toy.key);
-
-        // Read the processed BMP file
-        let bmpPath = `/tmp/${toy.key}.bmp`;
-
-        // Check if the file exists before trying to read it
-        if (fs.existsSync(bmpPath)) {
-          // Upload the BMP file to Vercel Blob
-          const blobResult = await put(`${toy.key}.bmp`, fs.readFileSync(bmpPath), {
-            access: 'public',
-            addRandomSuffix: false
-          });
-
-          console.log(`Processed and uploaded ${toy.key}.bmp to ${blobResult.url}`);
-        } else {
-          console.error(`BMP file not found at ${bmpPath}`);
-        }
+        const bmpUrl = await processImageServerSide(toy.image, toy.key);
+        console.log(`Processed and uploaded ${toy.key}.bmp to ${bmpUrl}`);
       } catch (error) {
         console.error(`Error processing toy ${toy.key}:`, error);
       }

@@ -18,24 +18,12 @@ const steps = [{ label: 'Take a Picture' }, { label: 'Bring Them to Life' }];
 
 export default function AddToy() {
   const router = useRouter();
-  const [existingUserData, setExistingUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Initialize with a new empty toy
   const [userData, setUserData] = useState<UserData>({
     language: null,
     readingLevel: null,
-    toys: [
-      {
-        name: '',
-        title: '',
-        vocab: [],
-        key: '',
-        image: '',
-      },
-    ],
+    toys: [],
   });
-
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [animationFirst, setAnimationFirst] = useState<boolean>(true);
@@ -43,22 +31,15 @@ export default function AddToy() {
 
   // Load existing user data on component mount
   useEffect(() => {
-    const loadExistingUserData = () => {
-      const existingData = getExistingUserData();
-      if (existingData) {
-        setExistingUserData(existingData);
-        // Copy language and reading level from existing user data
-        setUserData(prevData => ({
-          ...prevData,
-          language: existingData.language,
-          readingLevel: existingData.readingLevel,
-        }));
-      }
-      setIsLoading(false);
-    };
-
-    loadExistingUserData();
-  }, []);
+    const existingData = getExistingUserData();
+    if (existingData) {
+      setUserData(existingData);
+    } else {
+      // If no existing data, redirect to setup
+      router.push('/setup');
+    }
+    setIsLoading(false);
+  }, [router]);
 
   // Show loading state while checking localStorage
   if (isLoading) {

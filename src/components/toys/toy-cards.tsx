@@ -128,6 +128,7 @@ export const ToyCard = ({
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.05 }}
               >
+                {/* TODO Improve edit modal
                 <Button 
                   size="icon" 
                   variant="ghost" 
@@ -136,7 +137,7 @@ export const ToyCard = ({
                   title="Edit toy"
                 >
                   <Pencil className="h-4 w-4 text-orange-600" />
-                </Button>
+                </Button> */}
               </motion.div>
             )}
             {onDelete && (

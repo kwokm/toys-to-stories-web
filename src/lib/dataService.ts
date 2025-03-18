@@ -47,7 +47,7 @@ export function saveUserData(userData: UserData): void {
 }
 
 /**
- * Save user data to Vercel Blob
+ * Save user data to Vercel Blob & Upstash
  */
 export async function saveUserDataToCloud(userData: UserData): Promise<void> {
   try {

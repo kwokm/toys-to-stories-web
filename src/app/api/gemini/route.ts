@@ -36,7 +36,8 @@ export async function POST(request: NextRequest) {
     // Generate content
     const result = await geminiModel.generateContent(body.prompt);
     const response = await result.response;
-    const translation = response.text().trim();
+    const finalResult = response.text().trim();
+    return finalResult;
 
     // Return the response
     return NextResponse.json({ translation });

@@ -120,6 +120,24 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
     }
   };
 
+  // Function to handle translation
+  const handleTranslateWord = async (word: string, index: number) => {
+    if (!word.trim() || !userData.language) return;
+    
+    // Set loading state
+    setTranslatingIndices(prev => [...prev, index]);
+    
+    try {
+      // Call GeminiGeneral for translation
+      await translateWord(word, index);
+    } catch (error) {
+      console.error('Translation failed:', error);
+    } finally {
+      // Remove loading state
+      setTranslatingIndices(prev => prev.filter(i => i !== index));
+    }
+  };
+
   return (
     <div className="motion-preset-fade-in flex flex-col gap-4 motion-duration-[500ms]">
       <div className={`mb-4 flex flex-col gap-0 ${titleClass}`}>
@@ -204,7 +222,15 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
                       type="text"
                       placeholder={`Vocabulary word ${index + 1}`}
                       value={vocabData[index]?.word || ''}
-                      onChange={e => updateVocabWord(index, e.target.value)}
+                      onChange={e => {
+                        if (currentToy && currentToy.vocab) {
+                          const updatedVocab = [...currentToy.vocab];
+                          updatedVocab[index] = { ...updatedVocab[index], word: e.target.value };
+                          const updatedToy = { ...currentToy, vocab: updatedVocab };
+                          setUserData(prev => ({ ...prev, toys: [updatedToy] }));
+                        }
+                      }}
+                      onBlur={e => handleTranslateWord(e.target.value, index)}
                     />
                     <Pencil className="absolute top-1/2 right-0 h-3.5 w-3.5 -translate-y-1/2 text-orange-300 transition-colors group-hover:text-orange-400" />
                   </div>

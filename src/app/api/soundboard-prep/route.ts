@@ -8,7 +8,7 @@ import { UserData, ToyData } from '@/types/types';
 import { Jimp, ResizeStrategy } from 'jimp';
 import Replicate from 'replicate';
 import { writeFile } from 'node:fs/promises';
-import { put } from '@vercel/blob';
+import { put, list } from '@vercel/blob';
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,12 +28,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get list of existing BMPs from Vercel Blobs
+    const { blobs } = await list({});
+    const existingBmps = new Set(blobs.map(blob => blob.pathname));
+
     // Process images sequentially to avoid race conditions
     for (const toy of toys) {
       // Validate toy object has required properties
       if (!toy || !toy.image || !toy.key) {
         console.error('Invalid toy object:', toy);
         continue; // Skip this toy and move to the next one
+      }
+
+      // Skip if BMP already exists
+      if (existingBmps.has(`/${toy.key}.bmp`)) {
+        console.log(`BMP for toy ${toy.key} already exists, skipping...`);
+        continue;
       }
 
       // Process the image to BMP format

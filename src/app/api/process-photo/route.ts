@@ -5,6 +5,7 @@ import { writeFile } from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { identifyToy, chooseVocabulary } from '@/lib/gemini';
+import mime from 'mime-types';
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,6 +29,7 @@ export async function POST(request: NextRequest) {
 
     // Create a unique filename or use the provided one
     const extension = path.extname(fileName || 'image.jpg');
+    const mimeType = mime.lookup(extension) || 'application/octet-stream';
     const filename = `${uuidv4()}${extension}`;
 
     // Save to tmp directory
@@ -51,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     // Return the path that can be used to access the file
     const publicPath = `${uploadDir}/${filename}`;
-    const identifyToyResult = await identifyToy(`${publicPath}`, `image/${extension.substring(1)}`);
+    const identifyToyResult = await identifyToy(`${publicPath}`, mimeType);
     console.log('JSON IS', JSON.parse(identifyToyResult));
     const toyTitle = JSON.parse(identifyToyResult).Item;
     const chooseVocabularyResult = await chooseVocabulary(toyTitle, language);

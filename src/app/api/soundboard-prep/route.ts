@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
     // Get list of existing BMPs from Vercel Blobs
     const { blobs } = await list({});
     const existingBmps = new Set(blobs.map(blob => blob.pathname));
+    console.log('EXISTING BMPs are ', existingBmps);
 
     // Process images sequentially to avoid race conditions
     for (const toy of toys) {
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Skip if BMP already exists
-      if (existingBmps.has(`/${toy.key}.bmp`)) {
+      if (existingBmps.has(`${toy.key}.bmp`)) {
         console.log(`BMP for toy ${toy.key} already exists, skipping...`);
         continue;
       }

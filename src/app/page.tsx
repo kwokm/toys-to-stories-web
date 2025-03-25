@@ -92,9 +92,11 @@ function EmptyHome() {
             onClick={handleImageClick}
             title="Triple-click to load demo data"
           />
+          {/*
           <p className="mt-2 text-xs text-gray-500 italic">
             Triple-click the image to load demo data
           </p>
+          */}
         </div>
         <Button 
           size="lg" 

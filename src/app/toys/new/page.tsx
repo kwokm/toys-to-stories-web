@@ -54,7 +54,7 @@ export default function AddToy() {
 
   return (
     <div className="flex min-h-screen w-screen bg-orange-50">
-      <div className="mx-4 flex w-full flex-col gap-4 pt-16 lg:mx-24">
+      <div className="mx-4 flex w-full flex-col gap-4 pt-12 md:pt-16 lg:mx-24">
         <div className="mx-auto h-20 overflow-hidden rounded-md">
           <Image
             className="h-full w-auto"

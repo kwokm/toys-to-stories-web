@@ -202,7 +202,7 @@ export default function ToysPage() {
           className={`${selectedToys.length > 0 ? 'motion-scale-loop-[102%] grayscale-0 motion-duration-[1500ms]' : ''}grayscale-100 mesh-gradient my-auto ml-auto overflow-clip text-black transition-all duration-[1500ms]`}
         >
           <ScrollText className="mr-1 size-4" />
-          Create a Story
+          Create Story
         </Button>
         <p
         className={`${selectedToys.length === 0 ? 'opacity-100' : 'opacity-0'} ${hasUserStories ? 'hidden' : 'flex'} my-auto ml-4 text-[13px] transition-opacity duration-300`}

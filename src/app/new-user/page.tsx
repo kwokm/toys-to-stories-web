@@ -61,7 +61,7 @@ export default function NewUser() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="mx-4 flex w-full flex-col gap-4 pt-16 lg:mx-24">
+      <div className="mx-4 flex w-full flex-col gap-4 pt-12 md:pt-16 lg:mx-24">
         <div className="mx-auto h-20 overflow-hidden rounded-md">
           <Image
             className="h-full w-auto"

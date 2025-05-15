@@ -87,7 +87,7 @@ function OtherLanguageSelector({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          className={cn('w-[200px] justify-between', className)}
+          className={cn('w-[200px] justify-between bg-white', className)}
           variant="outline"
           role="combobox"
           aria-expanded={open}
@@ -144,10 +144,23 @@ function LanguageCard({
   selected?: boolean;
   onSelect?: () => void;
 }) {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <Card
       className={cn(
-        'flex cursor-pointer flex-row items-center justify-center gap-4 p-4 transition-all duration-200',
+        'flex cursor-pointer flex-row items-center justify-center gap-2 md:gap-4 p-4 transition-all duration-200',
         selected ? 'border-orange-500 bg-orange-100 shadow-md' : 'hover:bg-orange-50'
       )}
       onClick={onSelect}
@@ -156,7 +169,7 @@ function LanguageCard({
         <ReactCountryFlag
           className="emojiFlag"
           style={{
-            fontSize: '4em',
+            fontSize: isMobile ? '2.5em' : '4em',
             lineHeight: '1em',
           }}
           countryCode={countryCodes[0]}
@@ -168,14 +181,14 @@ function LanguageCard({
               className="emojiFlag"
               countryCode={countryCode}
               style={{
-                fontSize: `${countryCodes.length === 2 ? '3.5em' : '3em'}`,
+                fontSize: `${countryCodes.length === 2 ? '3.5em' : isMobile ? '2.5em' : '3.2em'}`,
                 lineHeight: '1em',
               }}
             />
           ))}
         </FlagCascade>
       )}
-      <p className="text-xl font-bold">{language}</p>
+      <p className="text-base md:text-xl font-bold">{language}</p>
     </Card>
   );
 }
@@ -198,21 +211,20 @@ function ReadingLevelCard({
   return (
     <Card
       className={cn(
-        'flex w-full cursor-pointer flex-col gap-4 p-4 transition-all duration-200',
+        'flex w-full cursor-pointer flex-col gap-3 md:gap-4 p-3 md:p-4 transition-all duration-200',
         selected ? 'border-orange-500 bg-orange-100 shadow-md' : 'hover:bg-orange-50'
       )}
       onClick={onSelect}
     >
-      <div className="flex flex-row gap-6">
-        <div className="flex w-[92px] flex-col gap-2">
-          <Image src={stepImage} className="mx-auto h-16 w-16" alt={title} width={64} height={64} />
-          <p className="text-sm leading-none text-slate-600">{ageRange}</p>
+      <div className="flex flex-row gap-4 sm:gap-6">
+        <div className="my-auto flex w-[92px] flex-col gap-1 sm:gap-2">
+          <Image src={stepImage} className="mx-auto h-12 w-12 sm:h-16 sm:w-16" alt={title} width={64} height={64} />
+          <p className="text-xs sm:text-sm leading-tight text-slate-600">{ageRange}</p>
         </div>
-        <div className="my-auto flex flex-col gap-2">
-          <p className="text-left text-2xl font-semibold text-slate-800">{title}</p>
-          <p className="text-left text-base text-slate-700">{description}</p>
+        <div className="my-auto flex flex-col gap-1 sm:gap-2">
+          <p className="text-left text-lg sm:text-2xl font-semibold text-slate-800">{title}</p>
+          <p className="text-left text-sm sm:text-base text-slate-700">{description}</p>
         </div>
-        <div className="flex flex-row gap-1"></div>
       </div>
     </Card>
   );

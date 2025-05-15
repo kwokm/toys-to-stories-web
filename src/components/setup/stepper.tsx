@@ -52,7 +52,7 @@ const StepIndicator: React.FC<{ currentStep: number; steps: StepProps[] }> = ({
   <div className="align-center mx-auto flex items-center justify-center gap-10">
     {steps.map((step, index) => (
       <div key={step.label} className="flex flex-col items-center">
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center w-8 h-8 sm:w-10 sm:h-10">
           <Image
             className={`h-10 w-10 transition-all duration-300 ease-in-out ${index <= currentStep ? 'saturate-100' : 'saturate-0'}`}
             src={`/assets/step${index + 1}.svg`}
@@ -87,7 +87,7 @@ interface StepContentProps {
 
 const StepContent: React.FC<StepContentProps> = ({ children }) => {
   return (
-    <div className="mt-8 mb-6 flex min-h-[30vh] w-full motion-preset-focus justify-center rounded-lg text-center motion-duration-[500ms] dark:border-gray-600">
+    <div className="mt-4 sm:mt-8 mb-6 flex min-h-[30vh] w-full motion-preset-focus justify-center rounded-lg text-center motion-duration-[500ms] dark:border-gray-600">
       {children}
     </div>
   );
@@ -206,7 +206,7 @@ const Stepper: React.FC<StepperProps> = ({
         isCurrentStepValid,
       }}
     >
-      <div className="mx-auto my-6 w-full motion-preset-blur-right p-6 motion-duration-[500ms]">
+      <div className="mx-auto my-4 md:my-6 w-full motion-preset-blur-right md:p-6 motion-duration-[500ms]">
         <StepIndicator currentStep={currentStep} steps={steps} />
         {/*<ProgressBar currentStep={currentStep} totalSteps={steps.length} />*/}
         {currentStepContent}

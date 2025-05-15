@@ -14,12 +14,12 @@ export const ReadingLevelSelection: React.FC<ReadingLevelSelectionProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="pb-2 text-center text-[28px] font-[700] text-gray-800">
+      <h2 className="pb-2 text-center text-2xl md:text-[28px] font-[700] text-gray-800">
         What stage best describes the child's current reading level?
       </h2>
       <div className="flex flex-col gap-4">
         <ReadingLevelCard
-          title="Exploring Books"
+          title="Meeting Books"
           description="Looks at pictures, listens to voices, and occasionally likes to chew on books."
           stepImage="/assets/lvl1.svg"
           ageRange="0-12 Months"
@@ -27,7 +27,7 @@ export const ReadingLevelSelection: React.FC<ReadingLevelSelectionProps> = ({
           onSelect={() => setUserData({ ...userData, readingLevel: 1 })}
         />
         <ReadingLevelCard
-          title="Recognizing Words"
+          title="Talking & Pointing"
           stepImage="/assets/lvl2.svg"
           description="Points at pictures, repeats words nonstop, and loves rhymes even more than you do."
           ageRange="12-24 Months"
@@ -35,7 +35,7 @@ export const ReadingLevelSelection: React.FC<ReadingLevelSelectionProps> = ({
           onSelect={() => setUserData({ ...userData, readingLevel: 2 })}
         />
         <ReadingLevelCard
-          title="Listening to Stories"
+          title="Enjoying Stories"
           stepImage="/assets/lvl3.svg"
           description='Follows simple stories, starts recognizing letters, but may still think "S" is just a cool squiggle.'
           ageRange="2-3 Years"
@@ -43,7 +43,7 @@ export const ReadingLevelSelection: React.FC<ReadingLevelSelectionProps> = ({
           onSelect={() => setUserData({ ...userData, readingLevel: 3 })}
         />
         <ReadingLevelCard
-          title="Learning Letters & Sounds"
+          title="Exploring Letters & Sounds"
           stepImage="/assets/lvl4.svg"
           description="Knows their ABCs, understands basic story sequences, predicts what happens next."
           ageRange="3-4 Years"
@@ -51,7 +51,7 @@ export const ReadingLevelSelection: React.FC<ReadingLevelSelectionProps> = ({
           onSelect={() => setUserData({ ...userData, readingLevel: 4 })}
         />
         <ReadingLevelCard
-          title="Starting to Read"
+          title="Becoming a Reader"
           stepImage="/assets/lvl5.svg"
           description='Recognizes words, enjoys a good plot twist, and uses "reading" as an excuse to stay up past bedtime.'
           ageRange="4-5 Years"

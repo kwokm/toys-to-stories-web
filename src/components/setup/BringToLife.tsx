@@ -142,7 +142,7 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
     <div className="motion-preset-fade-in flex flex-col gap-4 motion-duration-[500ms]">
       <div className={`mb-4 flex flex-col gap-0 ${titleClass}`}>
         {/* Title */}
-        <h1 className={`text-[80px] leading-none font-bold text-gray-800 ${titleClass}`}>Hello!</h1>
+        <h1 className={`text-5xl md:text-[80px] leading-none font-bold text-gray-800 ${titleClass}`}>Hello!</h1>
         {animationFirst ? (
           <TypewriterEffectSmooth
             className="mx-auto mt-4 mb-0"
@@ -162,11 +162,11 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
         </div>
       </div>
       {/* Grid */}
-      <div className="mx-auto my-4 flex flex-row gap-24">
+      <div className="mx-auto my-4 flex flex-col gap-10 md:flex md:flex-row md:gap-24">
         {/* Column 1 */}
         {/* Toy Polaroid */}
         <Card
-          className={`motion-translate-y-loop-10 motion-translate-x-loop-5 flex w-96 rotate-2 rotate-x-15 rotate-y-0 rotate-z-5 flex-col items-center gap-3 rounded-xs opacity-100 shadow-xl motion-ease-in-out motion-duration-2000 ${cardClass}`}
+          className={`motion-translate-y-loop-10 motion-translate-x-loop-5 flex w-80 sm:w-96 rotate-2 rotate-x-15 rotate-y-0 rotate-z-0 md:rotate-z-2 flex-col items-center gap-3 rounded-xs opacity-100 shadow-xl motion-ease-in-out motion-duration-2000 ${cardClass}`}
         >
           {capturedImage ? (
             <Image
@@ -174,10 +174,10 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
               alt="Captured toy"
               width={300}
               height={300}
-              className="h-75 w-75 rounded-md object-cover"
+              className="h-64 w-64 sm:h-75 sm:w-75 rounded-md object-cover"
             />
           ) : (
-            <div className="h-75 w-75 rounded-md border border-gray-300 bg-gray-100"></div>
+            <div className="h-64 w-64 sm:h-75 sm:w-75 rounded-md border border-gray-300 bg-gray-100"></div>
           )}
           <div className="flex flex-col items-center gap-0">
             <Input
@@ -213,12 +213,12 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
             {[0, 1, 2, 3].map(index => (
               <div
                 key={index}
-                className="group max-w-[250px] rounded-lg border border-none bg-none py-4 shadow-none"
+                className="mx-auto group max-w-[250px] rounded-lg border border-none bg-none py-4 shadow-none"
               >
                 <div className="mb-1 flex items-center justify-between border-b-2 border-dashed border-orange-500 pb-2">
                   <div className="relative flex-1">
                     <Input
-                      className="w-full border-none border-orange-400 bg-transparent p-0 pr-6 font-bricolage text-3xl font-semibold text-gray-700 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-2xl"
+                      className="w-full border-none border-orange-400 bg-transparent p-0 pr-6 font-bricolage text-xl md:text-3xl font-semibold text-gray-700 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-2xl"
                       type="text"
                       placeholder={`Vocabulary word ${index + 1}`}
                       value={vocabData[index]?.word || ''}
@@ -234,13 +234,14 @@ export const BringToLife: React.FC<BringToLifeProps> = ({
                     />
                     <Pencil className="absolute top-1/2 right-0 h-3.5 w-3.5 -translate-y-1/2 text-orange-300 transition-colors group-hover:text-orange-400" />
                   </div>
+                  {/* Audio Button 
                   <Button
                     variant="ghost"
                     size="sm"
                     className="ml-2 h-auto text-orange-500 hover:bg-orange-50 hover:text-orange-600"
                   >
                     <Volume className="h-4 w-4" />
-                  </Button>
+                  </Button>  */}
                 </div>
 
                 {/* Translation with loading state */}

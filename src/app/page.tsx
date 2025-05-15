@@ -61,13 +61,14 @@ function EmptyHome() {
 
   return (
     <motion.div 
-      className="align-center flex min-h-screen w-screen pb-24 bg-orange-50"
+      className="align-center flex min-h-screen w-screen bg-orange-50 bg-[url('/assets/HomeBG.svg')] bg-no-repeat bg-cover bg-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="align-center mx-auto my-auto flex flex-col items-center justify-center gap-26">
-        <div className="mx-auto flex flex-col items-center justify-center gap-14">
+      <div className="align-center mx-auto my-auto flex flex-col items-center justify-center gap-26 px-4">
+        <div className="mx-auto flex flex-col items-center justify-center gap-10 md:gap-14">
+          <div>
           <Image
             className="mx-auto rounded-md"
             src="/assets/ToysToStoriesColoredText.svg"
@@ -75,17 +76,15 @@ function EmptyHome() {
             width={554}
             height={128}
           />
-          <div className="mb-4 text-center">
-            <h2 className="mb-2 text-3xl font-bold" style={{ fontFamily: 'var(--font-bricolage)' }}>
-              Turn Toys Into Stories
+          <div className="text-center">
+            <h2 className="mb-2 text-xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-bricolage)' }}>
+            Create Magical Stories with your Favourite Toys
             </h2>
-            <p className="text-lg" style={{ fontFamily: 'var(--font-figtree)' }}>
-              Create magical stories with your favorite toys
-            </p>
+          </div>
           </div>
           <Image
-            className={`mx-auto rounded-md ${isLoading ? 'opacity-70' : ''} ${clickCount > 0 ? 'cursor-pointer' : ''} transition-all duration-300 hover:shadow-lg`}
-            src="/assets/HomeImage.webp"
+            className={`mx-auto rounded-md ${isLoading ? 'opacity-70' : ''} ${clickCount > 0 ? 'cursor-pointer' : ''}`}
+            src="/assets/HomeImageUpdated.png"
             alt="Welcome to Toys to Stories!"
             width={554}
             height={554}
@@ -100,7 +99,7 @@ function EmptyHome() {
         </div>
         <Button 
           size="lg" 
-          className="w-64 py-6 text-lg"
+          className="w-64 py-6 text-lg bg-orange-400 border-4 border-black shadow-sm hover:shadow-xl hover:bg-orange-500 transition-all duration-300"
           onClick={handleGetStarted}
         >
           <Shapes className="h-3.5 w-3.5" />

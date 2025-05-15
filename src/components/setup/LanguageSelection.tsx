@@ -11,7 +11,7 @@ interface LanguageSelectionProps {
 export const LanguageSelection: React.FC<LanguageSelectionProps> = ({ userData, setUserData }) => {
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="pb-2 text-center text-[28px] font-[700] text-gray-800">
+      <h2 className="pb-2 text-center text-2xl md:text-[28px] font-[700] text-gray-800">
         What language would you like your child to learn?
       </h2>
       <div className="flex flex-row flex-wrap justify-center gap-4">

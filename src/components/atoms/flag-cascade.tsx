@@ -16,7 +16,7 @@ export const FlagCascade: React.FC<FlagCascadeProps> = ({ children, className = 
         return (
           <div
             key={index}
-            className="absolute"
+            className="absolute scale-100 sm:scale-100 scale-[0.625] origin-top-left"
             style={{
               top: `${index * (isTwoChildren ? 18 : 12) - 6}px`,
               left: `${index * 6}px`,
@@ -30,12 +30,7 @@ export const FlagCascade: React.FC<FlagCascadeProps> = ({ children, className = 
         );
       })}
       {/* This empty div ensures the container has the right size */}
-      <div
-        style={{
-          width: `${64}px`,
-          height: `${64}px`,
-        }}
-      />
+      <div className="sm:w-16 sm:h-16 w-10 h-10" />
     </div>
   );
 };

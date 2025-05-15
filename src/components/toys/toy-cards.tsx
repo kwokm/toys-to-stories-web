@@ -189,7 +189,7 @@ export const EmptyToyCard = ({ variant }: { variant?: 'small' | 'large' | 'plus'
           <Link href="/toys/new">
             <Button className="rotate-2 shadow-md">
               <PlusCircleIcon className="h-10 w-10 text-white" />
-              <p className="text-white">Add a New Toy</p>
+              <p className="text-white">Add Toy</p>
             </Button>
           </Link>
         </div>

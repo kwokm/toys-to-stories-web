@@ -13,7 +13,7 @@ interface PageHeaderProps {
 export function PageHeader({ icon, title, description, actions, className = '' }: PageHeaderProps) {
   return (
     <div
-      className={`sticky top-0 z-50 flex flex-row rounded-b-2xl border border-b-orange-300 bg-white px-12 py-12 ${className}`}
+      className={`sticky top-0 z-50 flex flex-row rounded-b-2xl border border-b-orange-300 bg-white px-4 py-4 md:px-12 md:py-12 ${className}`}
     >
       <div className="flex flex-row gap-2">
         {/* Handle both component icons and image paths */}

@@ -26,16 +26,30 @@ export const TakePicture: React.FC<TakePictureProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-4 pb-8">
-      <h2 className="pb-0 text-center text-3xl font-[700] text-gray-800">
+      <h2 className="pb-0 text-center text-2xl md:text-3xl font-[700] text-gray-800">
         Let&apos;s bring your child&apos;s favorite toy to life!
       </h2>
-      <p className="pb-4 text-left text-base text-gray-600">
+      <p className="pb-4 text-center text-base text-gray-600 max-w-[600px]">
         Snap a photo of your child&apos;s favorite toy, and it will become an imaginary friend in a
         personalized story! Along the way, your child will learn four new words in the chosen
         language.
       </p>
-      <div className="flex w-full flex-row items-center justify-center gap-8">
-        <UploadButton
+      <div className="mx-auto mt-3 mb-12">
+        <Card className="flex w-80 sm:w-96 rotate-2 flex-col items-center gap-3 rounded-xs">
+          {capturedImage ? (
+            <Image
+              src={capturedImage}
+              alt="Captured toy"
+              width={300}
+              height={300}
+              className="h-64 w-64 sm:h-75 sm:w-75 rounded-md object-cover"
+            />
+          ) : (
+            <div className="h-64 w-64 sm:h-75 sm:w-75 rounded-md border border-gray-300 bg-gray-100"></div>
+          )}
+          
+          <div className="h-20 flex">
+          <UploadButton
           endpoint="imageUploader"
           config={{ cn: twMerge }}
           content={{
@@ -60,7 +74,7 @@ export const TakePicture: React.FC<TakePictureProps> = ({
               );
             },
           }}
-          className="motion-preset-compress ut-button:bg-black ut-allowed-content:hidden ut-button:ut-readying:bg-gray-600 ut-button:ut-uploading:bg-gray-600"
+          className="my-auto motion-preset-compress ut-button:bg-black ut-allowed-content:hidden ut-button:ut-readying:bg-gray-600 ut-button:ut-uploading:bg-gray-600"
           onClientUploadComplete={res => {
             setIsProcessing(true);
             setCapturedImage(
@@ -123,22 +137,7 @@ export const TakePicture: React.FC<TakePictureProps> = ({
             setIsProcessing(false);
           }}
         />
-      </div>
-      <div className="mx-auto mt-3 mb-12">
-        <Card className="flex w-96 rotate-2 flex-col items-center gap-3 rounded-xs">
-          {capturedImage ? (
-            <Image
-              src={capturedImage}
-              alt="Captured toy"
-              width={300}
-              height={300}
-              className="h-75 w-75 rounded-md object-cover"
-            />
-          ) : (
-            <div className="h-75 w-75 rounded-md border border-gray-300 bg-gray-100"></div>
-          )}
-
-          <div className="h-20" />
+          </div>
         </Card>
       </div>
     </div>

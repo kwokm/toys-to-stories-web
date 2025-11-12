@@ -28,7 +28,7 @@ export function useGemini(options: UseGeminiOptions = {}): UseGeminiReturn {
         },
         body: JSON.stringify({
           prompt,
-          model: options.model || 'gemini-1.5-flash',
+          model: options.model || 'gemini-2.5-flash',
           temperature: options.temperature || 1,
           maxTokens: options.maxTokens || 8192,
         }),

@@ -5,10 +5,10 @@ import { getToyAudio } from '@/lib/gemini';
 
 export async function POST(request: NextRequest) {
   try {
-    const { vocab, filePath } = await request.json();
+    const { vocab } = await request.json();
 
     // Request from Gemini
-    const toyAudio = await getToyAudio(vocab, filePath);
+    const toyAudio = await getToyAudio(vocab);
 
     return NextResponse.json({
       success: true,

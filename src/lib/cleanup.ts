@@ -12,7 +12,7 @@ export function getExistingUserData(): UserData | null {
     const userDataString = localStorage.getItem('userData');
     if (!userDataString) {
       console.log('No user data found in localStorage');
-      return null;  
+      return null;
     }
 
     const parsedData = JSON.parse(userDataString) as UserData;
@@ -50,7 +50,6 @@ export async function cleanupUserData(
     },
     body: JSON.stringify({
       vocab: JSON.stringify(newToy.vocab || []),
-      filePath: 'tmp/file_list.txt',
     }),
   })
     .then(response => response.json())

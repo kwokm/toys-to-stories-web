@@ -22,7 +22,7 @@ async function uploadToGemini(path, mimeType) {
 }
 
 const model = genAI.getGenerativeModel({
-  model: 'gemini-2.0-flash',
+  model: 'gemini-flash-lite-latest',
   systemInstruction:
     'You are a toy identification system. For each image you see:\n1. Identify the toy in the image\n2. Provide ONLY the most essential name/character in 1-2 words maximum\n3. Do not include descriptions, explanations, or qualifiers\n4. Focus on the main character/toy identity only\n5. Give the toy a creative name\n\nExamples:\n- For a blue dinosaur plush toy → "Dinosaur" or "Blue Dino" for the Item & "Azul" for the name\n- For a LEGO Darth Vader figure → "Sith" for the Item & "Darth Vader" for the name',
 });

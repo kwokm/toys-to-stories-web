@@ -1,12 +1,8 @@
 // Mark this file as server-only to prevent it from being bundled for the client
 'use server';
 
-const {
-  GoogleGenerativeAI,
-  HarmCategory,
-  HarmBlockThreshold,
-} = require("@google/generative-ai");
-const { GoogleAIFileManager } = require("@google/generative-ai/server");
+const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@google/generative-ai');
+const { GoogleAIFileManager } = require('@google/generative-ai/server');
 
 const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -38,24 +34,25 @@ async function uploadToGemini(path, mimeType) {
  * should probably employ a more sophisticated approach.
  */
 async function waitForFilesActive(files) {
-  console.log("Waiting for file processing...");
-  for (const name of files.map((file) => file.name)) {
+  console.log('Waiting for file processing...');
+  for (const name of files.map(file => file.name)) {
     let file = await fileManager.getFile(name);
-    while (file.state === "PROCESSING") {
-      process.stdout.write(".")
+    while (file.state === 'PROCESSING') {
+      process.stdout.write('.');
       /* await new Promise((resolve) => setTimeout(resolve, 10_000)); */
-      file = await fileManager.getFile(name)
+      file = await fileManager.getFile(name);
     }
-    if (file.state !== "ACTIVE") {
+    if (file.state !== 'ACTIVE') {
       throw Error(`File ${file.name} failed to process`);
     }
   }
-  console.log("...all files ready\n");
+  console.log('...all files ready\n');
 }
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
-  systemInstruction: "AUDIO MATCHING GUIDELINES:\n1. Be LITERAL first - match \"dog\" with \"Animal-Dog-Bark.wav\" before metaphorical matches\n2. For animal sounds, match the specific animal when available (e.g., \"lion\" → files with \"Cat-Spotted-Leopard\" as the closest big cat)\n3. For actions/verbs:\n   - Match \"laugh\" → \"Human-Laugh-Evil-Rich-Jerk.wav\" or \"Cartoon-Human-Giant-Laugh.wav\"\n   - Match \"splash\" → \"small-water-splash.wav\" or \"medium-water-splash.wav\"\n   - Match \"growl\" → any animal growl file if the specific animal isn't available\n4. For technology/sci-fi words, use \"Science-Fiction-\" files\n5. For nature/weather words, use appropriate environment sounds\n6. For musical instruments, match with available instrument sounds\n7. When no direct match exists, choose the conceptually closest sound:\n   - \"sleep\" → \"Human-Female-Snoring.wav\"\n   - \"fast\" → \"motorcycle-revs.wav\"\n   - \"magic\" → \"Science-Fiction-Sci-Fi-Electronic-Personal-Force-Field.wav\"\n\nReturn ONLY the exact filename that exists in the list. Do not modify other fields. Your response must be valid JSON.",
+  model: 'gemini-flash-latest',
+  systemInstruction:
+    'AUDIO MATCHING GUIDELINES:\n1. Be LITERAL first - match "dog" with "Animal-Dog-Bark.wav" before metaphorical matches\n2. For animal sounds, match the specific animal when available (e.g., "lion" → files with "Cat-Spotted-Leopard" as the closest big cat)\n3. For actions/verbs:\n   - Match "laugh" → "Human-Laugh-Evil-Rich-Jerk.wav" or "Cartoon-Human-Giant-Laugh.wav"\n   - Match "splash" → "small-water-splash.wav" or "medium-water-splash.wav"\n   - Match "growl" → any animal growl file if the specific animal isn\'t available\n4. For technology/sci-fi words, use "Science-Fiction-" files\n5. For nature/weather words, use appropriate environment sounds\n6. For musical instruments, match with available instrument sounds\n7. When no direct match exists, choose the conceptually closest sound:\n   - "sleep" → "Human-Female-Snoring.wav"\n   - "fast" → "motorcycle-revs.wav"\n   - "magic" → "Science-Fiction-Sci-Fi-Electronic-Personal-Force-Field.wav"\n\nReturn ONLY the exact filename that exists in the list. Do not modify other fields. Your response must be valid JSON.',
 });
 
 const generationConfig = {
@@ -63,34 +60,31 @@ const generationConfig = {
   topP: 0.95,
   topK: 40,
   maxOutputTokens: 8192,
-  responseMimeType: "application/json",
+  responseMimeType: 'application/json',
   responseSchema: {
-    type: "object",
+    type: 'object',
     properties: {
       vocab: {
-        type: "array",
+        type: 'array',
         items: {
-          type: "object",
+          type: 'object',
           properties: {
             translation: {
-              type: "string"
+              type: 'string',
             },
             word: {
-              type: "string"
+              type: 'string',
             },
             audio: {
-              type: "string"
-            }
+              type: 'string',
+            },
           },
-          required: [
-            "audio"
-          ]
-        }
-      }
-    }
+          required: ['audio'],
+        },
+      },
+    },
   },
 };
-
 
 export async function getToyAudio(input, fileListPath) {
   // TODO Make these files available on the local file system

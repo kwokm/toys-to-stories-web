@@ -15,7 +15,7 @@ const translationModel = genAI.getGenerativeModel({
 
 // New model for personality guessing
 const personalityModel = genAI.getGenerativeModel({
-  model: 'gemini-2.0-flash',
+  model: 'gemini-flash-latest',
   systemInstruction:
     'You are a creative toy personality expert who can imagine the personality traits and characteristics of toys based on their name and type. You create engaging, child-friendly personality profiles that are imaginative and positive.',
 });
@@ -127,7 +127,7 @@ export async function storyTranslation(language, json) {
 
 export async function guessPersonality(toyName, toyType) {
   try {
-    const prompt = `Create a personality profile for a toy named "${toyName}" which is a ${toyType}. 
+    const prompt = `Create a personality profile for a toy named "${toyName}" which is a ${toyType}.
       Imagine what kind of personality traits, likes, dislikes, and special abilities this toy might have.
       Be creative, child-friendly, and positive. The personality should be engaging for children.`;
 

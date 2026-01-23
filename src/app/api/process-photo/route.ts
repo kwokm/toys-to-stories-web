@@ -14,59 +14,63 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No image URL provided' }, { status: 400 });
     }
 
-    // Download the image
-    const response = await fetch(imageUrl);
-    if (!response.ok) {
+    // Determine MIME type from fileName or fall back to imageUrl
+    const mimeType =
+      (fileName && (mime.lookup(fileName) as string)) ||
+      (imageUrl && (mime.lookup(imageUrl) as string)) ||
+      'image/jpeg';
+
+    let identifyToyResult: string;
+    try {
+      identifyToyResult = await identifyToy(imageUrl, mimeType);
+    } catch (error) {
+      console.error('Error identifying toy:', error);
       return NextResponse.json(
-        { error: `Failed to download image: ${response.statusText}` },
+        {
+          error:
+            'Failed to identify toy. The AI service may be unavailable or the image could not be processed.',
+        },
         { status: 500 }
       );
     }
-    console.log('Language is', language);
 
-    const imageBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(imageBuffer);
-
-    // Create a unique filename or use the provided one
-    const extension = path.extname(fileName || 'image.jpg');
-    const mimeType = mime.lookup(extension) || 'application/octet-stream';
-    const filename = `${uuidv4()}${extension}`;
-
-    // Save to tmp directory
-    let uploadDir = '';
-    if (process.cwd() === '/var/task') {
-      uploadDir = path.join(process.cwd(), '../../tmp');
-    } else {
-      uploadDir = path.join(process.cwd(), '/tmp');
-    }
-    const filepath = path.join(uploadDir, filename);
-
-    // get file_list from public
-    let fileListPath = '';
-    if (process.cwd() === '/var/task') {
-      fileListPath = path.join(process.cwd(), '../../file_list.txt');
-    } else {
-      fileListPath = path.join(process.cwd(), '/file_list.txt');
+    let toyTitle: string;
+    try {
+      console.log('JSON IS', JSON.parse(identifyToyResult));
+      toyTitle = JSON.parse(identifyToyResult).Item;
+      if (!toyTitle) {
+        throw new Error('No toy title found in identification result');
+      }
+    } catch (error) {
+      console.error('Error parsing identification result:', error);
+      return NextResponse.json(
+        { error: 'Failed to parse toy identification result. The AI response may be malformed.' },
+        { status: 500 }
+      );
     }
 
-    await writeFile(filepath, buffer);
-
-    // Return the path that can be used to access the file
-    const publicPath = `${uploadDir}/${filename}`;
-    const identifyToyResult = await identifyToy(`${publicPath}`, mimeType);
-    console.log('JSON IS', JSON.parse(identifyToyResult));
-    const toyTitle = JSON.parse(identifyToyResult).Item;
-    const chooseVocabularyResult = await chooseVocabulary(toyTitle, language);
+    let chooseVocabularyResult: string;
+    try {
+      chooseVocabularyResult = await chooseVocabulary(toyTitle, language);
+    } catch (error) {
+      console.error('Error choosing vocabulary:', error);
+      return NextResponse.json(
+        { error: 'Failed to generate vocabulary. The AI service may be unavailable.' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      filepath: publicPath,
       geminiIdentify: identifyToyResult,
       geminiVocabulary: chooseVocabularyResult,
       originalUrl: imageUrl,
     });
   } catch (error) {
-    console.error('Error downloading and saving image:', error);
-    return NextResponse.json({ error: 'Failed to download and save image' }, { status: 500 });
+    console.error('Unexpected error processing request:', error);
+    return NextResponse.json(
+      { error: 'An unexpected error occurred while processing your request.' },
+      { status: 500 }
+    );
   }
 }

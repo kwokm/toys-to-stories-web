@@ -1,28 +1,11 @@
 'use server';
 const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@google/generative-ai');
-const { GoogleAIFileManager } = require('@google/generative-ai/server');
 
 const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
-const fileManager = new GoogleAIFileManager(apiKey);
-
-/**
- * Uploads the given file to Gemini.
- *
- * See https://ai.google.dev/gemini-api/docs/prompting_with_media
- */
-async function uploadToGemini(path, mimeType) {
-  const uploadResult = await fileManager.uploadFile(path, {
-    mimeType,
-    displayName: path,
-  });
-  const file = uploadResult.file;
-  console.log(`Uploaded file ${file.displayName} as: ${file.name}`);
-  return file;
-}
 
 const model = genAI.getGenerativeModel({
-  model: 'gemini-flash-latest',
+  model: 'gemini-flash-lite-latest',
   systemInstruction:
     'You are a toy identification system. For each image you see:\n1. Identify the toy in the image\n2. Provide ONLY the most essential name/character in 1-2 words maximum\n3. Do not include descriptions, explanations, or qualifiers\n4. Focus on the main character/toy identity only\n5. Give the toy a creative name\n\nExamples:\n- For a blue dinosaur plush toy → "Dinosaur" or "Blue Dino" for the Item & "Azul" for the name\n- For a LEGO Darth Vader figure → "Sith" for the Item & "Darth Vader" for the name',
 });
@@ -47,31 +30,30 @@ const generationConfig = {
   },
 };
 
-export async function identifyToy(imagePath, imageType) {
-  // TODO Make these files available on the local file system
-  // You may need to update the file paths
-  const files = [await uploadToGemini(imagePath, imageType)];
+export async function identifyToy(imageUrl, mimeType = 'image/jpeg') {
+  // Fetch the image from URL and convert to base64
+  const response = await fetch(imageUrl);
+  const imageArrayBuffer = await response.arrayBuffer();
+  const base64ImageData = Buffer.from(imageArrayBuffer).toString('base64');
 
-  const chatSession = model.startChat({
-    generationConfig,
-    history: [
+  // Use generateContent directly with inlineData
+  const result = await model.generateContent({
+    contents: [
       {
         role: 'user',
         parts: [
           {
-            fileData: {
-              mimeType: files[0].mimeType,
-              fileUri: files[0].uri,
+            inlineData: {
+              mimeType: mimeType,
+              data: base64ImageData,
             },
           },
         ],
       },
     ],
+    generationConfig,
   });
 
-  const result = await chatSession.sendMessage('');
   console.log(result.response.text());
   return result.response.text();
 }
-
-// identifyToy("./9db23a46-31cd-4a90-89c5-96622ba9b495.webp", "image/webp");
